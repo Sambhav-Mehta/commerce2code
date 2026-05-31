@@ -19,7 +19,7 @@ Now I'm learning tech from scratch and documenting it publicly — so you don't 
 
 ## 📖 Follow Along
 
-- **LinkedIn:** [Your LinkedIn URL]
+- **LinkedIn:** www.linkedin.com/in/mehta-sambhav
 - **Series:** #Commerce2Code
 
 ## 🚀 How to Use
