@@ -10,7 +10,7 @@ No hello world. No generic tutorials.
 
 | Session | Topic | Code |
 |---------|-------|------|
-| 01 | Variables, Data Types & f-strings | [View Code](session_01/variables.py) | [Interactive Notebook](session_01/variables_interactive.ipynb) | [Run on Google Colab](https://colab.research.google.com/github/yourUsername/commerce2code/blob/main/session_01/variables_interactive.ipynb) |
+| 01 | Variables, Data Types & f-strings | [View Code](session_01/variables.py) | [Interactive Notebook](session_01/variables_interactive.ipynb) | [Run on Google Colab](https://colab.research.google.com/github/Sambhav-Mehta/commerce2code/blob/main/session_01/variables_interactive.ipynb) |
 
 ## 🎯 What This Is
 
