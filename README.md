@@ -9,6 +9,7 @@ Every concept taught with real fintech and healthtech examples. No hello world. 
 | Session | Topic | Links |
 |---------|-------|-------|
 | 01 | Variables, Data Types & f-strings | [Code](session_01/variables.py) • [Notebook](session_01/variables_interactive.ipynb) • [Run on Colab](https://colab.research.google.com/github/Sambhav-Mehta/commerce2code/blob/main/session_01/variables_interactive.ipynb) |
+| 02 | Control Flow — if, elif, else | [Code](session_02/control_flow.py) • [Notebook](session_02/control_flow_interactive.ipynb) • [Run on Colab](https://colab.research.google.com/github/Sambhav-Mehta/commerce2code/blob/main/session_02/control_flow_interactive.ipynb) |
 
 ## 🎯 What This Is
 
