@@ -11,6 +11,7 @@ Every concept taught with real fintech and healthtech examples. No hello world. 
 | 01 | Variables, Data Types & f-strings | [Code](session_01/variables.py) • [Notebook](session_01/variables_interactive.ipynb) • [Run on Colab](https://colab.research.google.com/github/Sambhav-Mehta/commerce2code/blob/main/session_01/variables_interactive.ipynb) |
 | 02 | Control Flow — if, elif, else | [Code](session_02/control_flow.py) • [Notebook](session_02/control_flow_interactive.ipynb) • [Run on Colab](https://colab.research.google.com/github/Sambhav-Mehta/commerce2code/blob/main/session_02/control_flow_interactive.ipynb) |
 | 03 | Loops — for, while, break, continue | [Code](session_03/loops.py) • [Notebook](session_03/loops_interactive.ipynb) • [Run on Colab](https://colab.research.google.com/github/Sambhav-Mehta/commerce2code/blob/main/session_03/loops_interactive.ipynb) |
+| 04 | Operators — Arithmetic, Comparison, Logical | [Code](session_04/operators.py) • [Notebook](session_04/operators_interactive.ipynb) • [Run on Colab](https://colab.research.google.com/github/Sambhav-Mehta/commerce2code/blob/main/session_04/operators_interactive.ipynb) |
 
 ## 🎯 What This Is
 
