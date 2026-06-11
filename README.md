@@ -13,6 +13,7 @@ Every concept taught with real fintech and healthtech examples. No hello world. 
 | 03 | Loops — for, while, break, continue | [Code](session_03/loops.py) • [Notebook](session_03/loops_interactive.ipynb) • [Run on Colab](https://colab.research.google.com/github/Sambhav-Mehta/commerce2code/blob/main/session_03/loops_interactive.ipynb) |
 | 04 | Operators — Arithmetic, Comparison, Logical | [Code](session_04/operators.py) • [Notebook](session_04/operators_interactive.ipynb) • [Run on Colab](https://colab.research.google.com/github/Sambhav-Mehta/commerce2code/blob/main/session_04/operators_interactive.ipynb) |
 | 05 | Type Conversion — int(), float(), str() | [Code](session_05/type_conversion.py) • [Notebook](session_05/type_conversion_interactive.ipynb) • [Run on Colab](https://colab.research.google.com/github/Sambhav-Mehta/commerce2code/blob/main/session_05/type_conversion_interactive.ipynb) |
+| 06 | Functions — def, parameters, return | [Code](session_06/functions.py) • [Notebook](session_06/functions_interactive.ipynb) • [Run on Colab](https://colab.research.google.com/github/Sambhav-Mehta/commerce2code/blob/main/session_06/functions_interactive.ipynb) |
 
 ## 🎯 What This Is
 
