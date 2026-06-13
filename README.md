@@ -4,6 +4,14 @@ A public learning repository documenting my journey from 4 years as a Product Ma
 
 Every concept taught with real fintech and healthtech examples. No hello world. No generic tutorials.
 
+## 🎯 Series 01 — All Sessions Together
+
+Six sessions working in one place. Edit the applicants. Change the thresholds. Watch it run.
+
+| File | Description | Links |
+|------|-------------|-------|
+| All Sessions | Complete loan processor using every concept | [Code](series_01_wrap_up/all_sessions.py) • [Notebook](series_01_wrap_up/all_sessions_interactive.ipynb) • [Run on Colab](https://colab.research.google.com/github/Sambhav-Mehta/commerce2code/blob/main/series_01_wrap_up/all_sessions_interactive.ipynb) |
+
 ## 📚 Sessions
 
 | Session | Topic | Links |
