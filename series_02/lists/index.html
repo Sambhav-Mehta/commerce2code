@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commerce2Code — Series 02 · Lists</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, 'Inter', BlinkMacSystemFont, sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; background: #0D1117; }
+
+  /* HEADER */
+  .header { background: #0D1117; border-bottom: 2px solid #F97316; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .header-left { display: flex; flex-direction: column; gap: 2px; }
+  .header-title { font-size: 11px; font-weight: 700; color: #F97316; letter-spacing: 0.12em; text-transform: uppercase; }
+  .header-sub { font-size: 11px; color: #475569; }
+  .header-badge { background: #FFF7ED; border: 1.5px solid #F97316; border-radius: 20px; padding: 4px 12px; font-size: 11px; color: #F97316; font-weight: 700; }
+
+  /* MAIN SPLIT */
+  .split { display: flex; flex: 1; overflow: hidden; }
+
+  /* LEFT: CODE PANEL */
+  .code-panel { width: 50%; display: flex; flex-direction: column; background: #0D1117; overflow: hidden; border-right: none; }
+  .code-header { padding: 12px 18px; border-bottom: 1px solid #1E293B; flex-shrink: 0; }
+  .panel-label { font-size: 9px; color: #F97316; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+  .panel-sub { font-size: 10px; color: #334155; margin-top: 2px; }
+
+  /* Operation flash */
+  .op-flash { margin: 10px 14px; padding: 11px 14px; border-radius: 8px; flex-shrink: 0; min-height: 58px; transition: all 0.3s ease; }
+  .op-flash.idle { background: #0F172A; border: 1px dashed #1E293B; display: flex; align-items: center; }
+  .op-flash.idle p { font-size: 11px; color: #334155; font-style: italic; }
+  .op-type-label { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px; }
+  .op-code-text { font-family: 'Courier New', Consolas, monospace; font-size: 13px; word-break: break-all; }
+
+  /* Code body */
+  .code-body { flex: 1; overflow-y: auto; padding: 16px 18px; }
+  .code-line { font-family: 'Courier New', Consolas, monospace; font-size: 13px; line-height: 2; padding: 0 4px; border-left: 2px solid transparent; border-radius: 3px; transition: all 0.35s ease; white-space: pre; overflow: hidden; text-overflow: ellipsis; }
+  .cl-bracket { color: #F8FAFC; }
+  .cl-item { color: #86EFAC; }
+  .cl-item.hl { color: #93C5FD !important; background: rgba(59,130,246,0.12); border-left-color: #3B82F6 !important; }
+  .cl-comment { color: #4B5563; font-style: italic; }
+  .kw { color: #60A5FA; }
+  .fn { color: #C084FC; }
+  .str { color: #86EFAC; }
+  .num { color: #60A5FA; }
+  .cm { color: #4B5563; }
+  .len-box { margin-top: 16px; display: inline-flex; align-items: center; padding: 8px 14px; background: #0F172A; border: 1px solid #1E293B; border-radius: 8px; font-family: 'Courier New', Consolas, monospace; font-size: 13px; gap: 2px; }
+  .len-count { font-weight: 700; transition: color 0.4s ease; }
+  .ops-hint { margin-top: 18px; }
+
+  /* Quick actions */
+  .code-actions { padding: 10px 14px; border-top: 1px solid #1E293B; display: flex; gap: 6px; flex-shrink: 0; }
+  .act-btn { flex: 1; padding: 8px 6px; background: #0F172A; border: 1px solid #1E293B; border-radius: 6px; font-family: 'Courier New', Consolas, monospace; font-size: 11px; cursor: pointer; transition: background 0.2s, border-color 0.2s; }
+  .act-btn:hover { background: #162032; border-color: #334155; }
+  .act-btn.blue { color: #60A5FA; }
+  .act-btn.amber { color: #FDBA74; }
+  .act-btn.gray { color: #64748B; flex: 0 0 auto; padding: 8px 12px; }
+
+  /* ORANGE DIVIDER */
+  .divider { width: 4px; background: #F97316; flex-shrink: 0; }
+
+  /* RIGHT: SWIGGY UI */
+  .ui-panel { flex: 1; background: #F2F2F7; display: flex; flex-direction: column; overflow: hidden; }
+  .app-bar { background: white; padding: 12px 16px; border-bottom: 1px solid #E5E7EB; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
+  .app-bar-left { display: flex; flex-direction: column; }
+  .app-eyebrow { font-size: 8px; color: #F97316; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+  .app-title { font-size: 18px; font-weight: 700; color: #111827; margin-top: 1px; }
+  .count-badge { background: #FFF7ED; border: 1.5px solid #F97316; border-radius: 20px; padding: 5px 12px; display: flex; align-items: center; gap: 5px; }
+  .count-num { font-size: 18px; font-weight: 700; color: #F97316; line-height: 1; }
+  .count-text { font-size: 11px; color: #F97316; font-weight: 600; }
+
+  .orders-list { flex: 1; overflow-y: auto; padding: 10px 12px; }
+  .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 20px; }
+  .empty-icon { font-size: 36px; margin-bottom: 10px; }
+  .empty-title { font-size: 15px; font-weight: 700; color: #374151; }
+  .empty-sub { font-size: 12px; color: #9CA3AF; margin-top: 4px; }
+  .empty-code { margin-top: 12px; font-family: 'Courier New', monospace; font-size: 12px; color: #34D399; background: #052e16; padding: 7px 14px; border-radius: 6px; border: 1px solid #10B981; }
+
+  .order-card { background: white; border-radius: 12px; padding: 10px 10px 10px 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; border: 1.5px solid #E5E7EB; box-shadow: 0 1px 3px rgba(0,0,0,0.04); transition: border-color 0.3s ease, transform 0.25s ease, box-shadow 0.25s ease; }
+  .order-card.hl { border-color: #3B82F6; transform: scale(1.015); box-shadow: 0 4px 12px rgba(59,130,246,0.15); }
+  .food-img { width: 68px; height: 68px; border-radius: 10px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 7px 8px; overflow: hidden; }
+  .food-label { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.95); text-shadow: 0 1px 3px rgba(0,0,0,0.5); line-height: 1.3; }
+  .order-info { flex: 1; min-width: 0; }
+  .order-name { font-size: 14px; font-weight: 700; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .order-price { font-size: 12px; color: #6B7280; margin-top: 2px; }
+  .order-time { font-size: 11px; color: #9CA3AF; margin-top: 1px; }
+  .reorder-pill { margin-top: 6px; display: inline-block; padding: 3px 10px; background: #FFF7ED; border: 1px solid #F97316; border-radius: 20px; font-size: 10px; font-weight: 700; color: #F97316; cursor: default; }
+  .remove-btn { width: 26px; height: 26px; border-radius: 13px; background: #FEE2E2; border: none; cursor: pointer; color: #DC2626; font-size: 14px; font-weight: 700; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.2s, transform 0.15s; line-height: 1; }
+  .remove-btn:hover { background: #FECACA; transform: scale(1.1); }
+
+  .add-bar { background: white; padding: 12px 16px; border-top: 1px solid #E5E7EB; flex-shrink: 0; }
+  .add-label { font-size: 9px; color: #9CA3AF; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+  .add-row { display: flex; gap: 7px; }
+  .add-input { flex: 1; padding: 9px 12px; border: 1.5px solid #E5E7EB; border-radius: 8px; font-size: 13px; outline: none; font-family: inherit; min-width: 0; transition: border-color 0.2s; }
+  .add-input:focus { border-color: #F97316; }
+  .price-input { width: 52px; padding: 9px 6px; border: 1.5px solid #E5E7EB; border-radius: 8px; font-size: 13px; outline: none; text-align: center; font-family: inherit; transition: border-color 0.2s; }
+  .price-input:focus { border-color: #F97316; }
+  .add-btn { padding: 9px 16px; background: #F97316; border: none; border-radius: 8px; color: white; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.2s, transform 0.15s; flex-shrink: 0; }
+  .add-btn:hover { background: #EA6C00; transform: scale(1.02); }
+  .add-btn:active { transform: scale(0.98); }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 4px; }
+  .orders-list::-webkit-scrollbar-thumb { background: #E5E7EB; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <div class="header-title">#Commerce2Code · Series 02 · Lists</div>
+    <div class="header-sub">Interact with the UI on the right · watch Python update on the left</div>
+  </div>
+  <div class="header-badge">Session 01 of Series 02</div>
+</div>
+
+<!-- Split layout -->
+<div class="split">
+
+  <!-- ── LEFT: Python Code ── -->
+  <div class="code-panel">
+
+    <div class="code-header">
+      <div class="panel-label">Python — Backend</div>
+      <div class="panel-sub">Live list state · updates as you interact with the UI</div>
+    </div>
+
+    <!-- Operation flash -->
+    <div class="op-flash idle" id="opFlash">
+      <p>Add or remove an item on the right → see the Python operation appear here</p>
+    </div>
+
+    <!-- Code display -->
+    <div class="code-body" id="codeBody"></div>
+
+    <!-- Quick operation buttons -->
+    <div class="code-actions">
+      <button class="act-btn blue" onclick="accessFirst()" id="accessBtn">my_orders[0]</button>
+      <button class="act-btn amber" onclick="countItems()">len(my_orders)</button>
+      <button class="act-btn gray" onclick="resetAll()">Reset</button>
+    </div>
+  </div>
+
+  <!-- Orange divider -->
+  <div class="divider"></div>
+
+  <!-- ── RIGHT: Swiggy UI ── -->
+  <div class="ui-panel">
+
+    <div class="app-bar">
+      <div class="app-bar-left">
+        <div class="app-eyebrow">Swiggy — What you see</div>
+        <div class="app-title">Your Orders</div>
+      </div>
+      <div class="count-badge">
+        <span class="count-num" id="countNum">4</span>
+        <span class="count-text">items</span>
+      </div>
+    </div>
+
+    <div class="orders-list" id="ordersList"></div>
+
+    <div class="add-bar">
+      <div class="add-label">Add to list — my_orders.append( )</div>
+      <div class="add-row">
+        <input class="add-input" id="nameInput" placeholder="e.g. Paneer Tikka" onkeydown="if(event.key==='Enter')addItem()"/>
+        <input class="price-input" id="priceInput" placeholder="₹" onkeydown="if(event.key==='Enter')addItem()"/>
+        <button class="add-btn" onclick="addItem()">+ Add</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const COLORS = [
+  {bg:'#EA580C', light:'#FDBA74'},
+  {bg:'#CA8A04', light:'#FDE68A'},
+  {bg:'#7C3AED', light:'#DDD6FE'},
+  {bg:'#059669', light:'#A7F3D0'},
+  {bg:'#DC2626', light:'#FECACA'},
+  {bg:'#0284C7', light:'#BAE6FD'},
+  {bg:'#9333EA', light:'#E9D5FF'},
+  {bg:'#0891B2', light:'#CFFAFE'},
+];
+
+const OP = {
+  append: {bg:'#052e16', bdr:'#10B981', txt:'#34D399', lbl:'Adding →'},
+  remove: {bg:'#450a0a', bdr:'#EF4444', txt:'#FCA5A5', lbl:'Removing →'},
+  access: {bg:'#0c1a47', bdr:'#3B82F6', txt:'#93C5FD', lbl:'Accessing →'},
+  count:  {bg:'#431407', bdr:'#F97316', txt:'#FDBA74', lbl:'Counting →'},
+};
+
+const INIT = [
+  {id:1, name:'Butter Chicken', price:320, time:'Today, 8:30 PM',  ci:0},
+  {id:2, name:'Masala Dosa',    price:180, time:'Yesterday, 1 PM', ci:1},
+  {id:3, name:'Biryani',        price:280, time:'Monday, 7:45 PM', ci:2},
+  {id:4, name:'Chai',           price:80,  time:'Monday, 3 PM',    ci:3},
+];
+
+let orders   = JSON.parse(JSON.stringify(INIT));
+let colorIdx = 4;
+let hlId     = null;
+let timer    = null;
+let activeOp = null;
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function flash(code, type, hId = null) {
+  clearTimeout(timer);
+  activeOp = type;
+  const s = OP[type];
+  const el = document.getElementById('opFlash');
+  el.className = 'op-flash';
+  el.style.cssText = `background:${s.bg};border:1px solid ${s.bdr};`;
+  el.innerHTML = `
+    <div class="op-type-label" style="color:${s.bdr}">${s.lbl}</div>
+    <div class="op-code-text" style="color:${s.txt}">${esc(code)}</div>`;
+  hlId = hId;
+  render();
+  timer = setTimeout(() => {
+    const el2 = document.getElementById('opFlash');
+    el2.className = 'op-flash idle';
+    el2.style.cssText = '';
+    el2.innerHTML = '<p>Add or remove an item on the right → see the Python operation appear here</p>';
+    hlId = null;
+    activeOp = null;
+    render();
+  }, 2800);
+}
+
+function render() {
+  renderCode();
+  renderUI();
+}
+
+function renderCode() {
+  document.getElementById('countNum').textContent = orders.length;
+  document.getElementById('accessBtn').disabled = orders.length === 0;
+  document.getElementById('accessBtn').style.opacity = orders.length === 0 ? '0.35' : '1';
+
+  let h = '';
+
+  if (orders.length === 0) {
+    h += `<div class="code-line cl-bracket"><span class="kw">my_orders</span> = []</div>`;
+  } else {
+    h += `<div class="code-line cl-bracket"><span class="kw">my_orders</span> = [</div>`;
+    orders.forEach((o, i) => {
+      const isHl = hlId === o.id;
+      const comma = i < orders.length - 1 ? '<span class="cm">,</span>' : '';
+      h += `<div class="code-line cl-item${isHl ? ' hl' : ''}">
+        <span class="cm">    </span><span class="str">"${esc(o.name)}"</span>${comma}
+      </div>`;
+    });
+    h += `<div class="code-line cl-bracket">]</div>`;
+  }
+
+  const lenColor = activeOp === 'count' ? '#FDBA74' : '#34D399';
+  h += `
+    <div class="len-box">
+      <span class="fn">len</span><span style="color:#F8FAFC">(</span><span class="kw">my_orders</span><span style="color:#F8FAFC">)</span>
+      <span class="cm">&nbsp;#&nbsp;</span>
+      <span class="len-count" style="color:${lenColor}">${orders.length}</span>
+    </div>`;
+
+  h += `
+    <div class="ops-hint">
+      <div class="code-line cl-comment"># ── try these operations ──</div>
+      <div class="code-line cl-comment">my_orders[0]           → access first item</div>
+      <div class="code-line cl-comment">my_orders.append(x)    → add to end</div>
+      <div class="code-line cl-comment">my_orders.remove(x)    → delete item</div>
+      <div class="code-line cl-comment">len(my_orders)         → count items</div>
+    </div>`;
+
+  document.getElementById('codeBody').innerHTML = h;
+}
+
+function renderUI() {
+  const list = document.getElementById('ordersList');
+  if (orders.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🛒</div>
+        <div class="empty-title">my_orders is empty</div>
+        <div class="empty-sub">Add something below to start the list</div>
+        <div class="empty-code">my_orders = []</div>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = orders.map(o => {
+    const col  = COLORS[o.ci % COLORS.length];
+    const isHl = hlId === o.id;
+    const short = o.name.split(' ').slice(0, 2).join(' ');
+    return `
+      <div class="order-card${isHl ? ' hl' : ''}">
+        <div class="food-img" style="background:linear-gradient(145deg,${col.light} 0%,${col.bg} 100%)">
+          <div class="food-label">${esc(short)}</div>
+        </div>
+        <div class="order-info">
+          <div class="order-name">${esc(o.name)}</div>
+          <div class="order-price">₹${o.price}</div>
+          <div class="order-time">${esc(o.time)}</div>
+          <div class="reorder-pill">Reorder</div>
+        </div>
+        <button class="remove-btn" onclick="removeItem(${o.id},'${esc(o.name).replace(/'/g,"\\'")}')">×</button>
+      </div>`;
+  }).join('');
+}
+
+function addItem() {
+  const ni = document.getElementById('nameInput');
+  const pi = document.getElementById('priceInput');
+  const name = ni.value.trim();
+  if (!name) { ni.focus(); return; }
+  const price = parseInt(pi.value) || (Math.floor(Math.random() * 220) + 80);
+  orders.push({ id: Date.now(), name, price, time: 'Just now', ci: colorIdx++ });
+  flash(`my_orders.append("${name}")`, 'append');
+  ni.value = ''; pi.value = ''; ni.focus();
+}
+
+function removeItem(id, name) {
+  orders = orders.filter(o => o.id !== id);
+  flash(`my_orders.remove("${name}")`, 'remove');
+}
+
+function accessFirst() {
+  if (!orders.length) return;
+  flash(`my_orders[0]  →  "${orders[0].name}"`, 'access', orders[0].id);
+}
+
+function countItems() {
+  flash(`len(my_orders)  →  ${orders.length}`, 'count');
+}
+
+function resetAll() {
+  clearTimeout(timer);
+  orders    = JSON.parse(JSON.stringify(INIT));
+  colorIdx  = 4;
+  hlId      = null;
+  activeOp  = null;
+  const el  = document.getElementById('opFlash');
+  el.className   = 'op-flash idle';
+  el.style.cssText = '';
+  el.innerHTML   = '<p>Add or remove an item on the right → see the Python operation appear here</p>';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
