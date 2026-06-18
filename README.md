@@ -4,7 +4,13 @@ A public learning repository documenting my journey from 4 years as a Product Ma
 
 Every concept taught with real fintech and healthtech examples. No hello world. No generic tutorials.
 
-## 🎯 Series 01 — All Sessions Together
+---
+
+## 📚 Series 01 — Learning the Letters
+
+Python fundamentals through real fintech and healthtech scenarios.
+
+### All Sessions Together
 
 Six sessions working in one place. Edit the applicants. Change the thresholds. Watch it run.
 
@@ -12,7 +18,7 @@ Six sessions working in one place. Edit the applicants. Change the thresholds. W
 |------|-------------|-------|
 | All Sessions | Complete loan processor using every concept | [Code](series_01_wrap_up/all_sessions.py) • [Notebook](series_01_wrap_up/all_sessions_interactive.ipynb) • [Run on Colab](https://colab.research.google.com/github/Sambhav-Mehta/commerce2code/blob/main/series_01_wrap_up/all_sessions_interactive.ipynb) |
 
-## 📚 Sessions
+### Individual Sessions
 
 | Session | Topic | Links |
 |---------|-------|-------|
@@ -23,25 +29,58 @@ Six sessions working in one place. Edit the applicants. Change the thresholds. W
 | 05 | Type Conversion — int(), float(), str() | [Code](session_05/type_conversion.py) • [Notebook](session_05/type_conversion_interactive.ipynb) • [Run on Colab](https://colab.research.google.com/github/Sambhav-Mehta/commerce2code/blob/main/session_05/type_conversion_interactive.ipynb) |
 | 06 | Functions — def, parameters, return | [Code](session_06/functions.py) • [Notebook](session_06/functions_interactive.ipynb) • [Run on Colab](https://colab.research.google.com/github/Sambhav-Mehta/commerce2code/blob/main/session_06/functions_interactive.ipynb) |
 
+---
+
+## 🗂️ Series 02 — Data Structures
+
+Python data structures explained through real app UIs — Swiggy, IndiGo, and more.
+
+No setup needed. Click the live demo and interact directly in your browser.
+
+| Post | Topic | Links |
+|------|-------|-------|
+| 01 | Lists — ordered collections | [Code](series_02/lists/) • [▶ Live Demo](https://sambhav-mehta.github.io/commerce2code/series_02/lists/) |
+| 02 | Dictionaries — key : value pairs | [Code](series_02/dictionaries/dictionaries.py) • [▶ Live Demo](https://sambhav-mehta.github.io/commerce2code/series_02/dictionaries/) |
+| 03 | Tuples & Sets | _Coming soon_ |
+
+---
+
 ## 🎯 What This Is
 
 I spent 4 years at Bajaj Finserv Health approving features I never truly understood. Now I'm learning tech from scratch and documenting it publicly — so you don't have to figure it out alone.
+
+---
 
 ## 📖 Follow Along
 
 - **LinkedIn:** [Sambhav Mehta](https://www.linkedin.com/in/mehta-sambhav)
 - **Series:** #Commerce2Code
 
+---
+
 ## 🚀 How to Use This Repo
 
-Each session folder contains:
-- `variables.py` — Clean, runnable Python script
-- `variables_interactive.ipynb` — Interactive Jupyter notebook (view on GitHub)
-- Google Colab link — Edit and run code in your browser (no setup needed)
+### Series 01 — Run in your browser (no setup)
 
-Run locally:
+Every session has a Google Colab link. Click it, edit the code, run it — no installation needed.
+
+### Series 01 — Run locally
+
 ```bash
 git clone https://github.com/Sambhav-Mehta/commerce2code.git
 cd commerce2code
 python session_01/variables.py
 ```
+
+Each session folder contains:
+- `topic.py` — Clean, runnable Python script
+- `topic_interactive.ipynb` — Interactive Jupyter notebook (view on GitHub or run on Colab)
+- Google Colab link — Edit and run in your browser with no setup
+
+### Series 02 — Live interactive demos
+
+Series 02 uses browser-based demos instead of notebooks. Click the **▶ Live Demo** link for any post — no Python installation, no Colab, no setup. Just open and interact.
+
+Each post folder contains:
+- `topic.py` — The underlying Python code with comments
+- `index.html` — The interactive demo (also live at the GitHub Pages link)
