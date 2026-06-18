@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tuples & Sets — Commerce2Code · Series 02</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--or:#F97316;--tx:#0F172A;--mu:#64748B;--dm:#94A3B8;--bdr:#E2E8F0;--cod:#F1F5F9;--bbg:#FFF7ED;--dark:#0D1117;--ctx:#C9D1D9;--wh:#F8FAFC;
+  --gp:#1A73E8;--gpbg:#E8F0FE;--gpg:#34A853;--gpgbg:#E6F4EA;--gpr:#EA4335;--gpgr:#FBBC04;
+  --er:#EF4444;--erbg:#FEF2F2;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',-apple-system,sans-serif;background:#0D1117;min-height:100vh;display:flex;flex-direction:column;}
+
+header{background:#161B22;border-bottom:1px solid #30363D;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;}
+.badge{background:var(--bbg);border:1.5px solid var(--or);border-radius:20px;padding:4px 12px;font-size:10px;color:var(--or);font-weight:700;letter-spacing:.05em;}
+.hd-t{font-size:14px;font-weight:700;color:white;text-align:center;}
+.hd-s{font-size:10px;color:var(--dm);}
+
+.tabs{display:flex;background:#0D1117;border-bottom:1px solid #30363D;flex-shrink:0;}
+.tab{flex:1;padding:11px 8px;text-align:center;font-size:11px;font-weight:700;color:var(--dm);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.03em;}
+.tab.active{color:var(--or);border-bottom-color:var(--or);}
+.tab-panel{display:none;flex-direction:column;flex:1;}
+.tab-panel.active{display:flex;}
+
+.split{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0;}
+@media(max-width:600px){.split{grid-template-columns:1fr;}}
+.code-p{background:#0D1117;padding:14px;overflow-y:auto;border-right:1px solid #30363D;}
+.ui-p{background:#F0F4FF;padding:14px;overflow-y:auto;}
+@media(max-width:600px){.code-p{border-right:none;border-bottom:1px solid #30363D;max-height:220px;}}
+.plbl{font-size:9px;color:var(--or);letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:10px;}
+
+.cl{font-family:'Roboto Mono',monospace;font-size:12px;color:var(--ctx);line-height:1.85;padding:1px 6px;border-radius:3px;white-space:pre;}
+@media(max-width:480px){.cl{font-size:10px;}}
+.cl.cm{color:#6E7681;}
+@keyframes cFlash{0%{background:rgba(249,115,22,0);color:var(--ctx);}40%{background:rgba(249,115,22,.3);color:#F97316;}100%{background:rgba(249,115,22,.12);color:#F97316;}}
+@keyframes cErr{0%{background:rgba(239,68,68,0);}50%{background:rgba(239,68,68,.3);}100%{background:rgba(239,68,68,.1);}}
+.cl.flash{animation:cFlash .7s ease forwards;}
+.cl.flash-err{animation:cErr .7s ease forwards;color:#FCA5A5;}
+
+/* GPay receipt */
+.receipt{background:white;border-radius:14px;border:1px solid var(--bdr);overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.08);margin-bottom:10px;}
+.receipt-hd{background:var(--gpg);padding:14px 18px;text-align:center;}
+.receipt-tick{width:36px;height:36px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;font-size:18px;}
+.receipt-ok{font-size:13px;font-weight:700;color:white;letter-spacing:.04em;}
+.receipt-amt{font-size:32px;font-weight:700;color:white;margin-top:2px;}
+.receipt-merch{font-size:12px;color:rgba(255,255,255,.85);margin-top:2px;}
+.receipt-row{display:flex;justify-content:space-between;align-items:center;padding:9px 16px;border-bottom:1px solid var(--bdr);transition:background .3s;}
+.receipt-row.hl{background:rgba(249,115,22,.08);}
+.receipt-row.hl-err{background:rgba(239,68,68,.08);}
+.rl{font-size:11px;color:var(--mu);}
+.rv{font-size:12px;font-weight:700;color:var(--tx);}
+.err-toast{background:var(--erbg);border:1px solid var(--er);border-left:3px solid var(--er);border-radius:8px;padding:10px 14px;font-family:'Roboto Mono',monospace;font-size:11px;color:#B91C1C;margin-top:8px;display:none;}
+
+/* Merchants grid */
+.merchants-card{background:white;border-radius:14px;border:1px solid var(--bdr);overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.08);}
+.mc-head{background:var(--gpbg);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;}
+.mc-title{font-size:13px;font-weight:700;color:var(--gp);}
+.mc-count{font-size:11px;color:var(--gp);font-weight:600;}
+.mc-grid{display:flex;flex-wrap:wrap;gap:7px;padding:14px 16px;}
+.m-tag{background:var(--gpbg);border:1px solid rgba(26,115,232,.3);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--gp);font-weight:600;display:flex;align-items:center;gap:5px;cursor:default;}
+.m-tag .rm{font-size:10px;color:rgba(26,115,232,.5);cursor:pointer;margin-left:2px;}
+.m-tag .rm:hover{color:var(--er);}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+@keyframes popIn{0%{transform:scale(0);opacity:0;}70%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+.m-tag.shake{animation:shake .4s ease;}
+.m-tag.new{animation:popIn .3s ease;}
+.add-row{display:flex;gap:8px;padding:0 14px 12px;}
+.s-inp{flex:1;background:var(--wh);border:1.5px solid var(--bdr);border-radius:8px;padding:7px 11px;font-size:12px;font-family:inherit;color:var(--tx);outline:none;transition:border-color .2s;}
+.s-inp:focus{border-color:var(--gp);}
+.add-b{background:var(--gp);color:white;border:none;border-radius:8px;padding:7px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
+
+/* Ops */
+.ops{flex-shrink:0;background:#161B22;border-top:1px solid #30363D;padding:12px 14px;}
+.op-lbl{font-size:9px;color:var(--dm);font-weight:700;letter-spacing:.1em;margin-bottom:8px;}
+.op-grid{display:grid;gap:7px;margin-bottom:7px;}
+.op-3{grid-template-columns:repeat(3,1fr);}
+.op-2{grid-template-columns:repeat(2,1fr);}
+@media(max-width:400px){.op-3,.op-2{grid-template-columns:repeat(2,1fr);}}
+.ob{background:#0D1117;border:1.5px solid #30363D;border-radius:9px;padding:9px 5px;cursor:pointer;text-align:center;transition:all .2s;-webkit-tap-highlight-color:transparent;}
+.ob:hover{border-color:var(--or);background:#1A1208;}
+.ob:active{transform:scale(.96);}
+.ob.active{border-color:var(--or);background:#1A1208;box-shadow:0 0 0 2px rgba(249,115,22,.2);}
+.ob.err:hover{border-color:var(--er);background:#1A0808;}
+.ob.err.active{border-color:var(--er);background:#1A0808;}
+.oi{font-size:15px;margin-bottom:2px;}
+.on{font-size:10px;font-weight:700;color:white;}
+.oc{font-family:'Roboto Mono',monospace;font-size:8px;color:var(--dm);margin-top:1px;}
+.sm{background:#0D1117;border:1px solid #30363D;border-left:3px solid var(--or);border-radius:6px;padding:7px 11px;font-family:'Roboto Mono',monospace;font-size:11px;color:#A5D6FF;display:none;margin-bottom:7px;}
+.sm.err{border-left-color:var(--er);color:#FCA5A5;}
+.rb{width:100%;background:none;border:1.5px solid #30363D;border-radius:7px;padding:6px;font-size:11px;color:var(--dm);cursor:pointer;font-family:inherit;transition:all .2s;}
+.rb:hover{border-color:var(--mu);color:white;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Commerce2Code</div>
+  <div class="hd-t">Tuples &amp; Sets</div>
+  <div class="hd-s">Series 02 · Post 03</div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="sw('tuple')">🔒 TUPLE — Receipt</div>
+  <div class="tab" onclick="sw('set')">⚡ SET — Merchants</div>
+</div>
+
+<!-- TUPLE TAB -->
+<div class="tab-panel active" id="p-tuple">
+  <div class="split">
+    <div class="code-p">
+      <div class="plbl">Python — Tuple</div>
+      <div id="t-code"></div>
+    </div>
+    <div class="ui-p">
+      <div class="plbl" style="color:var(--gp)">GPay — Payment Receipt</div>
+      <div class="receipt">
+        <div class="receipt-hd">
+          <div class="receipt-tick">✓</div>
+          <div class="receipt-ok">PAYMENT SUCCESSFUL</div>
+          <div class="receipt-amt">₹500</div>
+          <div class="receipt-merch">Paid to Swiggy</div>
+        </div>
+        <div class="receipt-row" id="r-txn"><span class="rl">Transaction ID</span><span class="rv" id="v-txn">TXN4821093</span></div>
+        <div class="receipt-row" id="r-date"><span class="rl">Date &amp; Time</span><span class="rv" id="v-date">15 Jan 2025, 9:45 AM</span></div>
+        <div class="receipt-row" id="r-amt"><span class="rl">Amount</span><span class="rv" id="v-amt">₹500.00</span></div>
+        <div class="receipt-row" style="border:none"><span class="rl">Merchant</span><span class="rv">Swiggy</span></div>
+      </div>
+      <div class="err-toast" id="err-toast">TypeError: 'tuple' object does not<br>support item assignment</div>
+      <div style="background:#F8FAFC;border-radius:10px;border:1px solid var(--bdr);padding:11px 14px;">
+        <div style="font-size:9px;color:var(--dm);font-weight:700;letter-spacing:.1em;margin-bottom:7px">WHY IMMUTABILITY MATTERS</div>
+        <div style="font-size:12px;color:var(--tx);margin-bottom:5px">✓ Tamper-proof payment records</div>
+        <div style="font-size:12px;color:var(--tx);margin-bottom:5px">✓ Safe to pass around in code</div>
+        <div style="font-size:12px;color:#B91C1C">✗ Cannot change amount, date, or merchant</div>
+      </div>
+    </div>
+  </div>
+  <div class="ops">
+    <div class="op-lbl">TRY TUPLE OPERATIONS</div>
+    <div class="op-grid op-3">
+      <div class="ob" id="tb0" onclick="tOp(0)"><div class="oi">🔢</div><div class="on">Access TXN</div><div class="oc">receipt[0]</div></div>
+      <div class="ob" id="tb1" onclick="tOp(2)"><div class="oi">💰</div><div class="on">Access Amount</div><div class="oc">receipt[2]</div></div>
+      <div class="ob err" id="tb2" onclick="tErr()"><div class="oi">✏️</div><div class="on">Try to Change</div><div class="oc">receipt[2]=0</div></div>
+    </div>
+    <div class="sm" id="t-sm"></div>
+    <button class="rb" onclick="rTuple()">↺ Reset</button>
+  </div>
+</div>
+
+<!-- SET TAB -->
+<div class="tab-panel" id="p-set">
+  <div class="split">
+    <div class="code-p">
+      <div class="plbl">Python — Set</div>
+      <div id="s-code"></div>
+    </div>
+    <div class="ui-p">
+      <div class="plbl" style="color:var(--gp)">GPay — Paid This Month</div>
+      <div class="merchants-card">
+        <div class="mc-head">
+          <div class="mc-title">Merchants you paid</div>
+          <div class="mc-count" id="mc-count">5 unique</div>
+        </div>
+        <div class="mc-grid" id="mc-grid"></div>
+        <div class="add-row">
+          <input class="s-inp" id="m-inp" placeholder="Add a merchant..." maxlength="18" onkeydown="if(event.key==='Enter')addM()">
+          <button class="add-b" onclick="addM()">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ops">
+    <div class="op-lbl">TRY SET OPERATIONS</div>
+    <div class="op-grid op-3">
+      <div class="ob" id="sb0" onclick="addBookMyShow()"><div class="oi">🎬</div><div class="on">Add BookMyShow</div><div class="oc">merchants.add()</div></div>
+      <div class="ob err" id="sb1" onclick="addSwiggyDup()"><div class="oi">🔁</div><div class="on">Add Swiggy Again</div><div class="oc">duplicate!</div></div>
+      <div class="ob" id="sb2" onclick="removeNetflix()"><div class="oi">🗑️</div><div class="on">Remove Netflix</div><div class="oc">discard()</div></div>
+    </div>
+    <div class="sm" id="s-sm"></div>
+    <button class="rb" onclick="rSet()">↺ Reset</button>
+  </div>
+</div>
+
+<script>
+const receipt=["TXN4821093","15 Jan 2025, 9:45 AM",500.00,"Swiggy"];
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── TUPLE ──
+function renderTCode(fi,isErr){
+  const rows=[
+    {t:'payment = (', hi:false},
+    {t:'  "TXN4821093",',hi:fi===0},
+    {t:'  "15-Jan-2025",',hi:fi===1},
+    {t:'  500.00,',hi:fi===2},
+    {t:'  "Swiggy"',hi:fi===3},
+    {t:')',hi:false},
+  ];
+  let html=rows.map(r=>`<div class="cl${r.hi?(isErr?' flash-err':' flash'):''}">${esc(r.t)}</div>`).join('');
+  if(isErr){
+    html+=`<div class="cl cm"></div>`;
+    html+=`<div class="cl cm"># Try to change amount:</div>`;
+    html+=`<div class="cl flash-err">payment[2] = 0.00</div>`;
+    html+=`<div class="cl cm" style="color:#FCA5A5"># ❌ TypeError: tuple does not</div>`;
+    html+=`<div class="cl cm" style="color:#FCA5A5">#    support item assignment</div>`;
+  } else if(fi!==null){
+    const vals=["TXN4821093","15-Jan-2025","500.00","Swiggy"];
+    html+=`<div class="cl cm"></div>`;
+    html+=`<div class="cl flash">payment[${fi}]  # → "${vals[fi]}"</div>`;
+  }
+  document.getElementById('t-code').innerHTML=html;
+}
+
+function setTA(id){['tb0','tb1','tb2'].forEach(b=>document.getElementById(b).classList.remove('active'));if(id)document.getElementById(id).classList.add('active');}
+function tMsg(t,err){const e=document.getElementById('t-sm');e.style.display='block';e.textContent='>>> '+t;e.className='sm'+(err?' err':'');}
+function hlRow(id,err){['r-txn','r-date','r-amt'].forEach(r=>{const el=document.getElementById(r);el.classList.remove('hl','hl-err');});if(id){const el=document.getElementById(id);el.classList.add(err?'hl-err':'hl');}}
+
+function tOp(idx){
+  setTA(idx===0?'tb0':'tb1');
+  renderTCode(idx,false);
+  const rids=['r-txn','r-date','r-amt'];
+  const vals=['TXN4821093','15 Jan 2025, 9:45 AM','₹500.00'];
+  hlRow(rids[idx<2?idx:2],false);
+  document.getElementById('err-toast').style.display='none';
+  tMsg(`payment[${idx}]  →  "${receipt[idx]}"`,false);
+}
+
+function tErr(){
+  setTA('tb2');
+  renderTCode(2,true);
+  hlRow('r-amt',true);
+  document.getElementById('err-toast').style.display='block';
+  tMsg("TypeError: 'tuple' object does not support item assignment",true);
+}
+
+function rTuple(){
+  renderTCode(null,false);
+  setTA(null);
+  document.getElementById('t-sm').style.display='none';
+  document.getElementById('err-toast').style.display='none';
+  ['r-txn','r-date','r-amt'].forEach(r=>{const el=document.getElementById(r);el.classList.remove('hl','hl-err');});
+}
+
+// ── SET ──
+let merchants=new Set(["Swiggy","Zomato","Netflix","Zepto","IRCTC"]);
+
+function renderSCode(flash,isDup,isRem){
+  const arr=[...merchants];
+  let html=`<div class="cl">merchants = {</div>`;
+  arr.forEach((m,i)=>{
+    const comma=i<arr.length-1?',':'';
+    const isF=m===flash;
+    html+=`<div class="cl${isF?(isDup?' flash-err':' flash'):''}">&nbsp;&nbsp;"${esc(m)}"${comma}</div>`;
+  });
+  html+=`<div class="cl">}</div>`;
+  if(flash&&isDup){
+    html+=`<div class="cl cm"></div>`;
+    html+=`<div class="cl flash-err">merchants.add("${esc(flash)}")</div>`;
+    html+=`<div class="cl cm" style="color:#FCA5A5"># ⚠ Already exists — no change</div>`;
+  } else if(flash&&isRem){
+    html+=`<div class="cl cm"></div>`;
+    html+=`<div class="cl flash">merchants.discard("${esc(flash)}")</div>`;
+    html+=`<div class="cl cm"># → removed ✓</div>`;
+  } else if(flash){
+    html+=`<div class="cl cm"></div>`;
+    html+=`<div class="cl flash">merchants.add("${esc(flash)}")</div>`;
+    html+=`<div class="cl cm"># → added ✓</div>`;
+  }
+  document.getElementById('s-code').innerHTML=html;
+}
+
+function renderMGrid(flash,isDup){
+  const grid=document.getElementById('mc-grid');
+  grid.innerHTML=[...merchants].map(m=>{
+    const isF=m===flash;
+    return`<div class="m-tag${isF?(isDup?' shake':' new'):''}" id="mt-${esc(m)}">${esc(m)}<span class="rm" onclick="rmDirect('${esc(m)}')">✕</span></div>`;
+  }).join('');
+  document.getElementById('mc-count').textContent=`${merchants.size} unique`;
+}
+
+function setSA(id){['sb0','sb1','sb2'].forEach(b=>document.getElementById(b).classList.remove('active'));if(id)document.getElementById(id).classList.add('active');}
+function sMsg(t,err){const e=document.getElementById('s-sm');e.style.display='block';e.textContent='>>> '+t;e.className='sm'+(err?' err':'');}
+
+function addBookMyShow(){
+  setSA('sb0');
+  if(merchants.has("BookMyShow")){sMsg('"BookMyShow" already in set',true);return;}
+  merchants.add("BookMyShow");renderSCode("BookMyShow",false,false);renderMGrid("BookMyShow",false);
+  sMsg('merchants.add("BookMyShow")  →  added ✓',false);
+}
+
+function addSwiggyDup(){
+  setSA('sb1');
+  renderSCode("Swiggy",true,false);
+  const t=document.getElementById('mt-Swiggy');
+  if(t){t.classList.remove('shake');void t.offsetWidth;t.classList.add('shake');}
+  sMsg('"Swiggy" already in set — paid 14x but still appears once',true);
+}
+
+function removeNetflix(){
+  setSA('sb2');
+  if(!merchants.has("Netflix")){sMsg('"Netflix" already removed',true);return;}
+  merchants.discard("Netflix");renderSCode("Netflix",false,true);renderMGrid(null,false);
+  sMsg('merchants.discard("Netflix")  →  removed ✓',false);
+}
+
+function addM(){
+  const inp=document.getElementById('m-inp'),v=inp.value.trim();if(!v)return;
+  if(merchants.has(v)){
+    setSA('sb1');renderSCode(v,true,false);
+    const t=document.getElementById('mt-'+v);
+    if(t){t.classList.remove('shake');void t.offsetWidth;t.classList.add('shake');}
+    sMsg(`"${v}" already in set — no duplicate added`,true);
+  } else {
+    merchants.add(v);renderSCode(v,false,false);renderMGrid(v,false);
+    sMsg(`merchants.add("${v}")  →  added ✓`,false);
+  }
+  inp.value='';
+}
+
+function rmDirect(m){merchants.discard(m);renderSCode(null,false,false);renderMGrid(null,false);sMsg(`merchants.discard("${m}")  →  removed ✓`,false);}
+
+function rSet(){
+  merchants=new Set(["Swiggy","Zomato","Netflix","Zepto","IRCTC"]);
+  renderSCode(null,false,false);renderMGrid(null,false);setSA(null);
+  document.getElementById('s-sm').style.display='none';
+}
+
+function sw(t){
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',i===(t==='tuple'?0:1)));
+  document.getElementById('p-tuple').classList.toggle('active',t==='tuple');
+  document.getElementById('p-set').classList.toggle('active',t==='set');
+}
+
+renderTCode(null,false);renderSCode(null,false,false);renderMGrid(null,false);
+</script>
+</body>
+</html>
