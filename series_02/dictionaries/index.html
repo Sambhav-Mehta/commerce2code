@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dictionaries — Commerce2Code · Series 02</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--or:#F97316;--tx:#0F172A;--mu:#64748B;--dm:#94A3B8;--bdr:#E2E8F0;--cod:#F1F5F9;--bbg:#FFF7ED;--dark:#0D1117;--ctx:#C9D1D9;--wh:#F8FAFC;--gn:#22C55E;--gnbg:#DCFCE7;--gndk:#16A34A;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+@media(max-width:640px){html,body{overflow:auto;height:auto;}}
+body{font-family:'Inter',-apple-system,sans-serif;background:#0D1117;display:flex;flex-direction:column;}
+
+/* ── HEADER ── */
+header{flex-shrink:0;background:#161B22;border-bottom:1px solid #30363D;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.badge{background:var(--bbg);border:1.5px solid var(--or);border-radius:20px;padding:4px 12px;font-size:10px;color:var(--or);font-weight:700;letter-spacing:.05em;white-space:nowrap;}
+.hd-title{font-size:14px;font-weight:700;color:white;}
+.hd-sub{font-size:10px;color:var(--dm);white-space:nowrap;}
+
+/* ── PANELS ── */
+.panels{flex:1;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;min-height:0;}
+@media(max-width:640px){.panels{grid-template-columns:1fr;overflow:visible;}}
+
+/* Code panel */
+.code-panel{background:#0D1117;padding:18px;overflow-y:auto;border-right:1px solid #30363D;}
+.panel-lbl{font-size:9px;color:var(--or);letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:14px;}
+
+.cl{font-family:'Roboto Mono',monospace;font-size:13px;color:var(--ctx);line-height:2;padding:1px 8px;border-radius:4px;transition:background .3s,color .3s;white-space:pre;}
+@media(max-width:480px){.cl{font-size:11px;}}
+.cl.kw{color:#FF7B72;}
+.cl.str{color:#A5D6FF;}
+.cl.key-line{color:#79C0FF;}
+@keyframes cFlash{0%{background:rgba(249,115,22,0);color:var(--ctx);}35%{background:rgba(249,115,22,.28);color:#F97316;}100%{background:rgba(249,115,22,.1);color:#F97316;}}
+.cl.flash{animation:cFlash .7s ease forwards;}
+.cl.dimmed{opacity:.35;}
+
+.res-box{margin-top:14px;background:#161B22;border:1px solid #30363D;border-left:3px solid var(--or);border-radius:6px;padding:10px 14px;font-family:'Roboto Mono',monospace;font-size:12px;color:#A5D6FF;min-height:38px;display:none;}
+
+/* BP panel */
+.bp-panel{background:#F0F4FF;padding:16px;overflow-y:auto;}
+
+.bp-card{background:white;border-radius:16px;border:1px solid var(--bdr);overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.1);}
+
+.bp-head{background:var(--tx);padding:14px 18px;display:flex;justify-content:space-between;align-items:flex-start;}
+.bp-airline{font-size:17px;font-weight:700;color:white;}
+.bp-fn{font-size:19px;font-weight:700;color:white;}
+.bp-tag{font-size:8px;color:var(--dm);letter-spacing:.12em;margin-top:4px;}
+
+.bp-row{padding:10px 18px;border-bottom:1px solid var(--bdr);}
+.bpl{font-size:8px;color:var(--dm);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px;}
+.bpv{font-size:16px;font-weight:700;color:var(--tx);transition:color .3s;}
+.bpv.lg{font-size:24px;}
+.bpv.sm{font-size:13px;}
+
+@keyframes fGreen{0%,100%{color:var(--tx);}50%{color:var(--gndk);}}
+@keyframes fOrange{0%,100%{color:var(--tx);}50%{color:var(--or);}}
+.bpv.fg{animation:fGreen .7s ease;}
+.bpv.fo{animation:fOrange .7s ease;}
+
+.route-row{padding:10px 18px;background:#F8FAFF;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;}
+.rarrow{font-size:22px;color:var(--or);}
+
+.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);padding:10px 18px;gap:8px;border-bottom:1px solid var(--bdr);}
+
+.bp-status{background:#F0FDF4;padding:12px 18px;}
+.stat-badge{display:inline-flex;align-items:center;gap:6px;background:var(--gnbg);border:1px solid var(--gn);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:var(--gndk);transition:all .4s;}
+.stat-badge.boarding{background:var(--bbg);border-color:var(--or);color:var(--or);}
+
+.gate-row{margin-top:8px;display:flex;gap:20px;}
+.gate-item{font-size:12px;color:var(--mu);opacity:0;transform:translateY(-4px);transition:opacity .5s,transform .5s;}
+.gate-item.show{opacity:1;transform:translateY(0);}
+
+.meal-wrap{transition:opacity .4s,max-height .4s;max-height:60px;overflow:hidden;}
+.meal-wrap.deleted{opacity:0;max-height:0;}
+
+/* ── OPS ── */
+.ops{flex-shrink:0;background:#161B22;border-top:1px solid #30363D;padding:14px 18px;}
+.ops-lbl{font-size:9px;color:var(--dm);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
+.op-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;}
+@media(max-width:480px){.op-grid{grid-template-columns:repeat(2,1fr);}}
+
+.op-btn{background:#0D1117;border:1.5px solid #30363D;border-radius:10px;padding:10px 6px;cursor:pointer;text-align:center;transition:all .2s;-webkit-tap-highlight-color:transparent;}
+.op-btn:hover{border-color:var(--or);background:#1A1208;}
+.op-btn:active{transform:scale(.96);}
+.op-btn.active{border-color:var(--or);background:#1A1208;box-shadow:0 0 0 2px rgba(249,115,22,.25);}
+.op-icon{font-size:16px;margin-bottom:3px;}
+.op-name{font-size:11px;font-weight:700;color:white;letter-spacing:.01em;}
+.op-code{font-family:'Roboto Mono',monospace;font-size:8px;color:var(--dm);margin-top:2px;}
+
+.stat-msg{background:#0D1117;border:1px solid #30363D;border-left:3px solid var(--or);border-radius:6px;padding:8px 12px;font-family:'Roboto Mono',monospace;font-size:11px;color:#A5D6FF;display:none;margin-bottom:8px;}
+.reset-btn{width:100%;background:none;border:1.5px solid #30363D;border-radius:8px;padding:7px;font-size:11px;color:var(--dm);cursor:pointer;font-family:inherit;transition:all .2s;}
+.reset-btn:hover{border-color:var(--mu);color:white;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Commerce2Code</div>
+  <div>
+    <div class="hd-title">Dictionaries — Python</div>
+  </div>
+  <div class="hd-sub">Series 02 · Post 02</div>
+</header>
+
+<div class="panels">
+  <!-- CODE PANEL -->
+  <div class="code-panel">
+    <div class="panel-lbl">Python — Dict State</div>
+    <div id="codeWrap"></div>
+    <div id="resBox" class="res-box"></div>
+  </div>
+
+  <!-- BOARDING PASS PANEL -->
+  <div class="bp-panel">
+    <div class="panel-lbl" style="color:var(--or)">IndiGo — What User Sees</div>
+    <div class="bp-card">
+      <div class="bp-head">
+        <div><div class="bp-airline">✈ IndiGo</div><div class="bp-tag">BOARDING PASS</div></div>
+        <div class="bp-fn">6E-345</div>
+      </div>
+      <div class="bp-row"><div class="bpl">Passenger</div><div class="bpv">Sambhav Mehta</div></div>
+      <div class="route-row">
+        <div><div class="bpl">From</div><div class="bpv">Mumbai</div><div style="font-size:10px;color:var(--dm)">BOM</div></div>
+        <div class="rarrow">→</div>
+        <div style="text-align:right"><div class="bpl">To</div><div class="bpv">Delhi</div><div style="font-size:10px;color:var(--dm)">DEL</div></div>
+      </div>
+      <div class="detail-grid">
+        <div><div class="bpl">Seat</div><div class="bpv lg" id="bpSeat">12A</div></div>
+        <div><div class="bpl">Class</div><div class="bpv sm">Economy</div></div>
+        <div class="meal-wrap" id="mealWrap"><div class="bpl">Meal</div><div class="bpv sm" id="bpMeal">Veg</div></div>
+      </div>
+      <div class="bp-status">
+        <div class="bpl">Status</div>
+        <div class="stat-badge" id="statBadge">✓ Checked In</div>
+        <div class="gate-row">
+          <div class="gate-item" id="gateItem">🚪 Gate: <strong id="bpGate">B4</strong></div>
+          <div style="font-size:12px;color:var(--mu)">Boarding: 05:30</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OPS -->
+<div class="ops">
+  <div class="ops-lbl">Try the 4 operations</div>
+  <div class="op-grid">
+    <div class="op-btn" id="btnAccess" onclick="doAccess()">
+      <div class="op-icon">🔍</div>
+      <div class="op-name">Access</div>
+      <div class="op-code">dict["seat"]</div>
+    </div>
+    <div class="op-btn" id="btnUpdate" onclick="doUpdate()">
+      <div class="op-icon">✏️</div>
+      <div class="op-name">Update</div>
+      <div class="op-code">dict["status"]=</div>
+    </div>
+    <div class="op-btn" id="btnAdd" onclick="doAdd()">
+      <div class="op-icon">➕</div>
+      <div class="op-name">Add</div>
+      <div class="op-code">dict["gate"]=</div>
+    </div>
+    <div class="op-btn" id="btnDelete" onclick="doDelete()">
+      <div class="op-icon">🗑️</div>
+      <div class="op-name">Delete</div>
+      <div class="op-code">del dict["meal"]</div>
+    </div>
+  </div>
+  <div class="stat-msg" id="statMsg"></div>
+  <button class="reset-btn" onclick="doReset()">↺ Reset to initial state</button>
+</div>
+
+<script>
+const init={passenger:"Sambhav Mehta",flight:"6E-345",from:"Mumbai",to:"Delhi",seat:"12A","class":"Economy",meal:"Veg",status:"Checked In"};
+let st=JSON.parse(JSON.stringify(init));
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function renderCode(flashKey){
+  const entries=[
+    ['passenger',st.passenger],['flight',st.flight],
+    ['from',st.from],['to',st.to],
+    ['seat',st.seat],['class',st['class']],
+  ];
+  if(st.meal!==undefined)entries.push(['meal',st.meal]);
+  entries.push(['status',st.status]);
+  if(st.gate!==undefined)entries.push(['gate',st.gate]);
+
+  let html='<div class="cl"><span style="color:#FF7B72">my_booking</span> = {</div>';
+  entries.forEach(([k,v],i)=>{
+    const comma=i<entries.length-1?',':'';
+    const isFlash=k===flashKey;
+    html+=`<div class="cl key-line${isFlash?' flash':''}">&nbsp;&nbsp;<span style="color:#A5D6FF">"${esc(k)}"</span> : <span style="color:#A8FF78">"${esc(v)}"</span>${comma}</div>`;
+  });
+  html+='<div class="cl">}</div>';
+  document.getElementById('codeWrap').innerHTML=html;
+}
+
+function showMsg(txt){
+  const el=document.getElementById('statMsg');
+  el.style.display='block';
+  el.textContent='>>> '+txt;
+}
+
+function setActive(id){
+  ['btnAccess','btnUpdate','btnAdd','btnDelete'].forEach(b=>document.getElementById(b).classList.remove('active'));
+  if(id)document.getElementById(id).classList.add('active');
+}
+
+function flashBP(id,cls){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.classList.remove('fg','fo');
+  void el.offsetWidth;
+  el.classList.add(cls);
+}
+
+function doAccess(){
+  setActive('btnAccess');
+  renderCode('seat');
+  flashBP('bpSeat','fg');
+  showMsg('my_booking["seat"]  →  "12A"');
+}
+
+function doUpdate(){
+  setActive('btnUpdate');
+  if(st.status==='Boarding'){showMsg('Already updated — status is "Boarding"');return;}
+  st.status='Boarding';
+  renderCode('status');
+  const b=document.getElementById('statBadge');
+  b.textContent='→ Boarding';b.className='stat-badge boarding';
+  showMsg('my_booking["status"] = "Boarding"  →  updated ✓');
+}
+
+function doAdd(){
+  setActive('btnAdd');
+  if(st.gate!==undefined){showMsg('Gate already added — key exists');return;}
+  st.gate='B4';
+  renderCode('gate');
+  document.getElementById('gateItem').classList.add('show');
+  showMsg('my_booking["gate"] = "B4"  →  added ✓');
+}
+
+function doDelete(){
+  setActive('btnDelete');
+  if(st.meal===undefined){showMsg('"meal" key already deleted');return;}
+  delete st.meal;
+  renderCode(null);
+  document.getElementById('mealWrap').classList.add('deleted');
+  showMsg('del my_booking["meal"]  →  removed ✓');
+}
+
+function doReset(){
+  st=JSON.parse(JSON.stringify(init));
+  setActive(null);
+  renderCode(null);
+  document.getElementById('statBadge').textContent='✓ Checked In';
+  document.getElementById('statBadge').className='stat-badge';
+  document.getElementById('gateItem').classList.remove('show');
+  document.getElementById('mealWrap').classList.remove('deleted');
+  document.getElementById('statMsg').style.display='none';
+}
+
+renderCode(null);
+</script>
+</body>
+</html>
