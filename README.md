@@ -45,20 +45,3 @@ git clone https://github.com/Sambhav-Mehta/commerce2code.git
 cd commerce2code
 python session_01/variables.py
 ```
-
----
-
-Replace `Sambhav-Mehta` with your actual GitHub username and update the LinkedIn URL to yours.
-
----
-
-## The issue you had
-
-Your table was too complex. I simplified it by:
-1. Putting all links in one cell (separated by • bullets)
-2. Removing long table headers
-3. Shortening the overall structure
-
-This should render properly now on GitHub.
-
-**Go ahead and update your README with this and take a screenshot to confirm it displays correctly.** Then we'll finalize Post 2.
