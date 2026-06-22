@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Index & Slicing — Commerce2Code · Series 02</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--or:#F97316;--tx:#0F172A;--mu:#64748B;--dm:#94A3B8;--bdr:#E2E8F0;--cod:#F1F5F9;--bbg:#FFF7ED;--dark:#0D1117;--ctx:#C9D1D9;--wh:#F8FAFC;
+  --bms:#C4242B;--bmsbg:#FDECEC;--bmsdk:#8E1A20;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',-apple-system,sans-serif;background:#0D1117;min-height:100vh;display:flex;flex-direction:column;}
+
+header{background:#161B22;border-bottom:1px solid #30363D;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;}
+.badge{background:var(--bbg);border:1.5px solid var(--or);border-radius:20px;padding:4px 12px;font-size:10px;color:var(--or);font-weight:700;letter-spacing:.05em;}
+.hd-t{font-size:14px;font-weight:700;color:white;}
+.hd-s{font-size:10px;color:var(--dm);}
+
+.split{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0;}
+@media(max-width:600px){.split{grid-template-columns:1fr;}}
+.code-p{background:#0D1117;padding:14px;overflow:auto;border-right:1px solid #30363D;}
+.ui-p{background:#FBF5F0;padding:16px;overflow-y:auto;}
+@media(max-width:600px){.code-p{border-right:none;border-bottom:1px solid #30363D;max-height:260px;}}
+.plbl{font-size:9px;color:var(--or);letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:10px;}
+
+.crow{white-space:nowrap;font-family:'Roboto Mono',monospace;font-size:13px;color:var(--ctx);line-height:2;}
+@media(max-width:480px){.crow{font-size:11px;}}
+.tok{padding:1px 3px;border-radius:3px;}
+@keyframes tFlash{0%{background:rgba(196,36,43,0);color:var(--ctx);}40%{background:rgba(196,36,43,.45);color:#fff;}100%{background:rgba(196,36,43,.18);color:#FCA5A5;}}
+.tok.flash{animation:tFlash .7s ease forwards;}
+.cl-cm{color:#6E7681;font-family:'Roboto Mono',monospace;font-size:12px;line-height:2;}
+@keyframes cFlash{0%{background:rgba(249,115,22,0);color:var(--ctx);}40%{background:rgba(249,115,22,.3);color:#F97316;}100%{background:rgba(249,115,22,.12);color:#F97316;}}
+.opline{font-family:'Roboto Mono',monospace;font-size:13px;line-height:2;padding:1px 6px;border-radius:3px;color:var(--ctx);}
+@media(max-width:480px){.opline{font-size:11px;}}
+.opline.flash{animation:cFlash .7s ease forwards;}
+
+/* Seat map */
+.seatcard{background:white;border-radius:14px;border:1px solid var(--bdr);overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.06);}
+.seatcard-h{background:var(--bms);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;}
+.sc-title{font-size:13px;font-weight:700;color:white;}
+.sc-sub{font-size:10px;color:rgba(255,255,255,.8);}
+.screen-curve{height:8px;background:linear-gradient(to bottom, rgba(196,36,43,.15), transparent);border-radius:50%;margin:14px 24px 4px;}
+.screen-lbl{text-align:center;font-size:9px;color:var(--dm);letter-spacing:.15em;margin-bottom:14px;}
+
+.zone{margin:0 16px 14px;}
+.zone-lbl{font-size:9px;color:var(--mu);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.zone-seats{display:flex;gap:6px;}
+.seat{flex:1;aspect-ratio:1;background:var(--cod);border:1px solid var(--bdr);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--mu);transition:all .3s;position:relative;}
+@keyframes seatPop{0%{transform:scale(1);}40%{transform:scale(1.15);}100%{transform:scale(1);}}
+.seat.sel{background:var(--bms);border-color:var(--bms);color:white;animation:seatPop .5s ease;}
+.seat.sel::after{content:'';position:absolute;top:2px;right:2px;width:5px;height:5px;border-radius:50%;background:#22C55E;}
+
+/* Ops */
+.ops{flex-shrink:0;background:#161B22;border-top:1px solid #30363D;padding:12px 14px;}
+.op-lbl{font-size:9px;color:var(--dm);font-weight:700;letter-spacing:.1em;margin-bottom:8px;}
+.op-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:7px;}
+@media(max-width:420px){.op-grid{grid-template-columns:repeat(2,1fr);}}
+.ob{background:#0D1117;border:1.5px solid #30363D;border-radius:9px;padding:9px 5px;cursor:pointer;text-align:center;transition:all .2s;-webkit-tap-highlight-color:transparent;}
+.ob:hover{border-color:var(--bms);background:#1F0C0D;}
+.ob:active{transform:scale(.96);}
+.ob.active{border-color:var(--bms);background:#1F0C0D;box-shadow:0 0 0 2px rgba(196,36,43,.25);}
+.oi{font-size:15px;margin-bottom:2px;}
+.on{font-size:10px;font-weight:700;color:white;}
+.oc{font-family:'Roboto Mono',monospace;font-size:8px;color:var(--dm);margin-top:1px;}
+.sm{background:#0D1117;border:1px solid #30363D;border-left:3px solid var(--bms);border-radius:6px;padding:7px 11px;font-family:'Roboto Mono',monospace;font-size:11px;color:#FCA5A5;display:none;margin-bottom:7px;}
+.rb{width:100%;background:none;border:1.5px solid #30363D;border-radius:7px;padding:6px;font-size:11px;color:var(--dm);cursor:pointer;font-family:inherit;transition:all .2s;}
+.rb:hover{border-color:var(--mu);color:white;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Commerce2Code</div>
+  <div class="hd-t">Index &amp; Slicing</div>
+  <div class="hd-s">Series 02 · Post 04</div>
+</header>
+
+<div class="split">
+  <div class="code-p">
+    <div class="plbl">Python — Row F (16 seats)</div>
+    <div id="lit-rows"></div>
+    <div style="height:10px"></div>
+    <div id="op-line"></div>
+  </div>
+  <div class="ui-p">
+    <div class="plbl" style="color:var(--bms)">BookMyShow — Seat Selection</div>
+    <div class="seatcard">
+      <div class="seatcard-h">
+        <div><div class="sc-title">🎬 Avengers: Saga</div><div class="sc-sub">Row F · PVR Phoenix</div></div>
+        <div class="sc-sub" id="sel-count">0 selected</div>
+      </div>
+      <div class="screen-curve"></div>
+      <div class="screen-lbl">S C R E E N</div>
+
+      <div class="zone">
+        <div class="zone-lbl">Premium · F1–F4</div>
+        <div class="zone-seats" id="zone1"></div>
+      </div>
+      <div class="zone">
+        <div class="zone-lbl">Regular · F5–F8</div>
+        <div class="zone-seats" id="zone2"></div>
+      </div>
+      <div class="zone">
+        <div class="zone-lbl">Group Recommended · F9–F12</div>
+        <div class="zone-seats" id="zone3"></div>
+      </div>
+      <div class="zone">
+        <div class="zone-lbl">Recliner · F13–F16</div>
+        <div class="zone-seats" id="zone4"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ops">
+  <div class="op-lbl">TRY INDEX &amp; SLICE OPERATIONS</div>
+  <div class="op-grid">
+    <div class="ob" id="b-first" onclick="run('first')"><div class="oi">1️⃣</div><div class="on">First Seat</div><div class="oc">row[0]</div></div>
+    <div class="ob" id="b-fifth" onclick="run('fifth')"><div class="oi">5️⃣</div><div class="on">5th Seat</div><div class="oc">row[4]</div></div>
+    <div class="ob" id="b-last" onclick="run('last')"><div class="oi">🔚</div><div class="on">Last Seat</div><div class="oc">row[-1]</div></div>
+    <div class="ob" id="b-group" onclick="run('group')"><div class="oi">👥</div><div class="on">Group Pick</div><div class="oc">row[8:12]</div></div>
+    <div class="ob" id="b-premium" onclick="run('premium')"><div class="oi">⭐</div><div class="on">Premium Zone</div><div class="oc">row[:4]</div></div>
+    <div class="ob" id="b-recliner" onclick="run('recliner')"><div class="oi">🛋️</div><div class="on">Recliner Zone</div><div class="oc">row[-4:]</div></div>
+  </div>
+  <div class="sm" id="sm"></div>
+  <button class="rb" onclick="reset()">↺ Reset selection</button>
+</div>
+
+<script>
+const seatRow=["F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12","F13","F14","F15","F16"];
+const ops={
+  first:   {code:'seat_row[0]',     idxs:[0],              btn:'b-first'},
+  fifth:   {code:'seat_row[4]',     idxs:[4],              btn:'b-fifth'},
+  last:    {code:'seat_row[-1]',    idxs:[15],             btn:'b-last'},
+  group:   {code:'seat_row[8:12]',  idxs:[8,9,10,11],      btn:'b-group'},
+  premium: {code:'seat_row[:4]',    idxs:[0,1,2,3],        btn:'b-premium'},
+  recliner:{code:'seat_row[-4:]',   idxs:[12,13,14,15],    btn:'b-recliner'},
+};
+
+function buildSeats(){
+  const zones=[
+    {id:'zone1',start:0},{id:'zone2',start:4},{id:'zone3',start:8},{id:'zone4',start:12}
+  ];
+  zones.forEach(z=>{
+    const el=document.getElementById(z.id);
+    el.innerHTML='';
+    for(let i=0;i<4;i++){
+      const idx=z.start+i;
+      const s=document.createElement('div');
+      s.className='seat';
+      s.id='seat-'+idx;
+      s.textContent=seatRow[idx];
+      el.appendChild(s);
+    }
+  });
+}
+
+function renderLitRows(highlightIdxs){
+  const rows=[[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15]];
+  let html='<div class="crow">seat_row = [</div>';
+  rows.forEach((r,ri)=>{
+    let line='<div class="crow">&nbsp;&nbsp;';
+    r.forEach((idx,i)=>{
+      const isH=highlightIdxs.includes(idx);
+      const comma=(ri<rows.length-1||i<r.length-1)?',':'';
+      line+=`<span class="tok${isH?' flash':''}">"${seatRow[idx]}"</span>${comma}${i<r.length-1?' ':''}`;
+    });
+    line+='</div>';
+    html+=line;
+  });
+  html+='<div class="crow">]</div>';
+  document.getElementById('lit-rows').innerHTML=html;
+}
+
+function renderOpLine(opKey){
+  if(!opKey){document.getElementById('op-line').innerHTML='';return;}
+  const op=ops[opKey];
+  const result=op.idxs.length===1?`"${seatRow[op.idxs[0]]}"`:`[${op.idxs.map(i=>'"'+seatRow[i]+'"').join(', ')}]`;
+  document.getElementById('op-line').innerHTML=
+    `<div class="cl-cm"></div><div class="opline flash">${op.code}</div><div class="cl-cm"># → ${result}</div>`;
+}
+
+function setActive(btnId){
+  Object.values(ops).forEach(o=>document.getElementById(o.btn).classList.remove('active'));
+  if(btnId)document.getElementById(btnId).classList.add('active');
+}
+
+function showMsg(t){
+  const el=document.getElementById('sm');
+  el.style.display='block';
+  el.textContent='>>> '+t;
+}
+
+function clearSeats(){
+  seatRow.forEach((_,i)=>document.getElementById('seat-'+i).classList.remove('sel'));
+}
+
+function run(key){
+  const op=ops[key];
+  setActive(op.btn);
+  clearSeats();
+  op.idxs.forEach(i=>document.getElementById('seat-'+i).classList.add('sel'));
+  renderLitRows(op.idxs);
+  renderOpLine(key);
+  document.getElementById('sel-count').textContent=op.idxs.length+' selected';
+  const resultDesc=op.idxs.length===1?`returns ONE seat → "${seatRow[op.idxs[0]]}"`:`returns A LIST → [${op.idxs.map(i=>'"'+seatRow[i]+'"').join(', ')}]`;
+  showMsg(`${op.code}  ${resultDesc}`);
+}
+
+function reset(){
+  setActive(null);
+  clearSeats();
+  renderLitRows([]);
+  renderOpLine(null);
+  document.getElementById('sel-count').textContent='0 selected';
+  document.getElementById('sm').style.display='none';
+}
+
+buildSeats();
+renderLitRows([]);
+</script>
+</body>
+</html>
