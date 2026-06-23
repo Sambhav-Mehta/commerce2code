@@ -79,7 +79,9 @@ header{background:#161B22;border-bottom:1px solid #30363D;padding:10px 18px;disp
 <div class="split">
   <div class="code-p">
     <div class="plbl">Python — dict ⇄ JSON</div>
-    <div id="code-out"></div>
+    <div id="code-static"></div>
+    <div id="code-arrow" style="display:none;text-align:center;font-size:18px;color:var(--pp);margin:10px 0;">↓</div>
+    <div id="code-dynamic"></div>
   </div>
   <div class="ui-p">
     <div class="plbl" style="color:var(--pp)">PhonePe ⇄ Bank — The Packet</div>
@@ -128,8 +130,8 @@ function pyDict(obj){
 function jsonStr(obj){return JSON.stringify(obj,null,2);}
 
 function renderStatic(){
-  document.getElementById('code-out').innerHTML=
-    `<div class="cl lbl"># payment_request (Python dict)</div>`+
+  document.getElementById('code-static').innerHTML=
+    `<div class="cl lbl"># payment_request — this stays a Python dict until we convert it</div>`+
     `<div class="cl">payment_request = ${esc(pyDict(paymentRequest))}</div>`;
 }
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -144,14 +146,18 @@ function run(key){
   document.getElementById('diffbox').classList.remove('show');
   const packet=document.getElementById('packet');
   packet.classList.remove('show-down','show-up');
+  document.getElementById('code-arrow').style.display='block';
 
   if(key==='send'){
     setActive('b-send');
     const json=jsonStr(paymentRequest);
-    document.getElementById('code-out').innerHTML=
-      `<div class="cl lbl"># Convert dict → JSON text</div>`+
-      `<div class="cl flash">request_json = json.dumps(payment_request)</div>`+
-      `<div class="cl cm"># → sent over the network as plain text:</div>`+
+    document.getElementById('code-arrow').innerHTML='↓ json.dumps(payment_request) converts the dict above into JSON text:';
+    document.getElementById('code-arrow').style.fontSize='12px';
+    document.getElementById('code-arrow').style.fontFamily="'Roboto Mono',monospace";
+    document.getElementById('code-arrow').style.color='var(--or)';
+    document.getElementById('code-arrow').style.textAlign='left';
+    document.getElementById('code-dynamic').innerHTML=
+      `<div class="cl lbl"># AFTER — now it's JSON text, ready to send:</div>`+
       `<div class="cl flash">${esc(json)}</div>`;
     document.getElementById('packet-lbl').textContent='REQUEST →';
     document.getElementById('packet-body').textContent=json;
@@ -161,12 +167,17 @@ function run(key){
   } else if(key==='resp'){
     setActive('b-resp');
     const json=jsonStr(bankResponse);
-    document.getElementById('code-out').innerHTML=
-      `<div class="cl lbl"># Bank replies with JSON text</div>`+
-      `<div class="cl cm">bank_response_json = '''${esc(json)}'''</div>`+
-      `<div class="cl flash">bank_response = json.loads(bank_response_json)</div>`+
-      `<div class="cl cm"># → back to a usable Python dict:</div>`+
-      `<div class="cl flash">${esc(pyDict(bankResponse))}</div>`;
+    document.getElementById('code-arrow').innerHTML='↓ the bank sends JSON text back — json.loads() converts it into a dict:';
+    document.getElementById('code-arrow').style.fontSize='12px';
+    document.getElementById('code-arrow').style.fontFamily="'Roboto Mono',monospace";
+    document.getElementById('code-arrow').style.color='var(--or)';
+    document.getElementById('code-arrow').style.textAlign='left';
+    document.getElementById('code-dynamic').innerHTML=
+      `<div class="cl lbl"># BEFORE — incoming JSON text from the bank:</div>`+
+      `<div class="cl flash">${esc(json)}</div>`+
+      `<div class="cl cm" style="margin-top:8px"># bank_response = json.loads(bank_response_json)</div>`+
+      `<div class="cl lbl"># AFTER — usable Python dict again:</div>`+
+      `<div class="cl flash">bank_response = ${esc(pyDict(bankResponse))}</div>`;
     document.getElementById('packet-lbl').textContent='← RESPONSE';
     document.getElementById('packet-body').textContent=json;
     void packet.offsetWidth;
@@ -175,7 +186,8 @@ function run(key){
   } else if(key==='diff'){
     setActive('b-diff');
     document.getElementById('diffbox').classList.add('show');
-    document.getElementById('code-out').innerHTML=
+    document.getElementById('code-arrow').style.display='none';
+    document.getElementById('code-dynamic').innerHTML=
       `<div class="cl lbl"># Same data. Different rules.</div>`+
       `<div class="cl cm">Python:  True, False, None, 'quotes'</div>`+
       `<div class="cl cm">JSON:    true, false, null, "quotes"</div>`+
@@ -188,6 +200,8 @@ function run(key){
 function reset(){
   setActive(null);
   renderStatic();
+  document.getElementById('code-dynamic').innerHTML='';
+  document.getElementById('code-arrow').style.display='none';
   document.getElementById('diffbox').classList.remove('show');
   document.getElementById('packet').classList.remove('show-down','show-up');
   document.getElementById('sm').style.display='none';
