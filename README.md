@@ -41,7 +41,8 @@ No setup needed. Click the live demo and interact directly in your browser.
 |------|-------|-------|
 | 01 | Lists — ordered collections | [Code](series_02/lists/) • [▶ Live Demo](https://sambhav-mehta.github.io/commerce2code/series_02/lists/) |
 | 02 | Dictionaries — key : value pairs | [Code](series_02/dictionaries/dictionaries.py) • [▶ Live Demo](https://sambhav-mehta.github.io/commerce2code/series_02/dictionaries/) |
-| 03 | Tuples & Sets | _Coming soon_ |
+| 03 | Tuples & Sets | [Code](series_02/tuples_sets/tuples_sets.py) · [▶ Live Demo](https://sambhav-mehta.github.io/commerce2code/series_02/tuples_sets/) |
+| 04 | Index & Slicing | [Code](series_02/index_slicing/index_slicing.py) · [▶ Live Demo](https://sambhav-mehta.github.io/commerce2code/series_02/index_slicing/) |
 
 ---
 
