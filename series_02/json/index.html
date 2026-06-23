@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSON — Commerce2Code · Series 02</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--or:#F97316;--tx:#0F172A;--mu:#64748B;--dm:#94A3B8;--bdr:#E2E8F0;--cod:#F1F5F9;--bbg:#FFF7ED;--dark:#0D1117;--ctx:#C9D1D9;--wh:#F8FAFC;
+  --pp:#5F259F;--ppbg:#F3EEFA;--er:#EF4444;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',-apple-system,sans-serif;background:#0D1117;min-height:100vh;display:flex;flex-direction:column;}
+
+header{background:#161B22;border-bottom:1px solid #30363D;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;}
+.badge{background:var(--bbg);border:1.5px solid var(--or);border-radius:20px;padding:4px 12px;font-size:10px;color:var(--or);font-weight:700;letter-spacing:.05em;}
+.hd-t{font-size:14px;font-weight:700;color:white;}
+.hd-s{font-size:10px;color:var(--dm);}
+
+.split{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0;}
+@media(max-width:600px){.split{grid-template-columns:1fr;}}
+.code-p{background:#0D1117;padding:14px;overflow:auto;border-right:1px solid #30363D;}
+.ui-p{background:#F8F5FC;padding:16px;overflow-y:auto;display:flex;flex-direction:column;}
+@media(max-width:600px){.code-p{border-right:none;border-bottom:1px solid #30363D;max-height:260px;}}
+.plbl{font-size:9px;color:var(--or);letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:10px;}
+
+.cl{font-family:'Roboto Mono',monospace;font-size:12.5px;color:var(--ctx);line-height:1.85;padding:1px 5px;border-radius:3px;white-space:pre-wrap;word-break:break-word;}
+@media(max-width:480px){.cl{font-size:11px;}}
+.cl.cm{color:#6E7681;}
+.cl.lbl{color:var(--or);font-weight:700;}
+@keyframes cFlash{0%{background:rgba(249,115,22,0);}40%{background:rgba(249,115,22,.3);color:#F97316;}100%{background:rgba(249,115,22,.12);color:#F97316;}}
+.cl.flash{animation:cFlash .7s ease forwards;}
+.tok-diff{color:#FCA5A5;font-weight:700;}
+.tok-same{color:#A5D6FF;}
+
+/* Flow diagram */
+.flowwrap{flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px;position:relative;min-height:340px;}
+.devcard{background:white;border-radius:14px;border:1px solid var(--bdr);padding:14px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 14px rgba(0,0,0,.06);z-index:2;}
+.dev-icon{font-size:26px;}
+.dev-name{font-size:14px;font-weight:700;color:var(--tx);}
+.dev-sub{font-size:10px;color:var(--mu);}
+.flowline{position:absolute;left:50%;top:78px;bottom:78px;width:2px;background:repeating-linear-gradient(to bottom, var(--bdr) 0 6px, transparent 6px 12px);transform:translateX(-1px);z-index:1;}
+.packet{position:absolute;left:50%;transform:translateX(-50%);background:var(--ppbg);border:1.5px solid var(--pp);border-radius:10px;padding:10px 14px;font-family:'Roboto Mono',monospace;font-size:10.5px;color:var(--pp);max-width:88%;opacity:0;transition:all .5s ease;z-index:3;box-shadow:0 6px 16px rgba(95,37,159,.15);}
+.packet.show-down{opacity:1;top:46%;}
+.packet.show-up{opacity:1;top:46%;}
+.packet-lbl{font-size:8px;font-weight:700;letter-spacing:.08em;color:var(--pp);margin-bottom:4px;display:block;}
+
+.diffbox{background:white;border-radius:12px;border:1px solid var(--bdr);overflow:hidden;display:none;}
+.diffbox.show{display:block;}
+.diffrow{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid var(--bdr);font-family:'Roboto Mono',monospace;font-size:11.5px;}
+.diffrow:last-child{border-bottom:none;}
+.dpy{color:var(--mu);}
+.djs{color:var(--pp);font-weight:700;}
+
+/* Ops */
+.ops{flex-shrink:0;background:#161B22;border-top:1px solid #30363D;padding:12px 14px;}
+.op-lbl{font-size:9px;color:var(--dm);font-weight:700;letter-spacing:.1em;margin-bottom:8px;}
+.op-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:7px;}
+@media(max-width:420px){.op-grid{grid-template-columns:repeat(1,1fr);}}
+.ob{background:#0D1117;border:1.5px solid #30363D;border-radius:9px;padding:9px 5px;cursor:pointer;text-align:center;transition:all .2s;-webkit-tap-highlight-color:transparent;}
+.ob:hover{border-color:var(--pp);background:#1A1228;}
+.ob:active{transform:scale(.96);}
+.ob.active{border-color:var(--pp);background:#1A1228;box-shadow:0 0 0 2px rgba(95,37,159,.25);}
+.oi{font-size:15px;margin-bottom:2px;}
+.on{font-size:10px;font-weight:700;color:white;}
+.oc{font-family:'Roboto Mono',monospace;font-size:8px;color:var(--dm);margin-top:1px;}
+.sm{background:#0D1117;border:1px solid #30363D;border-left:3px solid var(--pp);border-radius:6px;padding:7px 11px;font-family:'Roboto Mono',monospace;font-size:11px;color:#D8B4FE;display:none;margin-bottom:7px;}
+.rb{width:100%;background:none;border:1.5px solid #30363D;border-radius:7px;padding:6px;font-size:11px;color:var(--dm);cursor:pointer;font-family:inherit;transition:all .2s;}
+.rb:hover{border-color:var(--mu);color:white;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Commerce2Code</div>
+  <div class="hd-t">JSON</div>
+  <div class="hd-s">Series 02 · Post 05</div>
+</header>
+
+<div class="split">
+  <div class="code-p">
+    <div class="plbl">Python — dict ⇄ JSON</div>
+    <div id="code-out"></div>
+  </div>
+  <div class="ui-p">
+    <div class="plbl" style="color:var(--pp)">PhonePe ⇄ Bank — The Packet</div>
+    <div class="flowwrap" id="flowwrap">
+      <div class="devcard"><div class="dev-icon">📱</div><div><div class="dev-name">PhonePe App</div><div class="dev-sub">Your phone</div></div></div>
+      <div class="flowline"></div>
+      <div class="packet" id="packet"><span class="packet-lbl" id="packet-lbl">REQUEST</span><span id="packet-body"></span></div>
+      <div class="devcard"><div class="dev-icon">🏦</div><div><div class="dev-name">HDFC Bank Server</div><div class="dev-sub">Processes the payment</div></div></div>
+    </div>
+    <div class="diffbox" id="diffbox">
+      <div class="diffrow"><span class="dpy">True / False</span><span class="djs">true / false</span></div>
+      <div class="diffrow"><span class="dpy">None</span><span class="djs">null</span></div>
+      <div class="diffrow"><span class="dpy">'single quotes'</span><span class="djs">"double quotes" only</span></div>
+      <div class="diffrow"><span class="dpy">tuple / set</span><span class="djs">doesn't exist in JSON</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="ops">
+  <div class="op-lbl">TRY THE REQUEST / RESPONSE CYCLE</div>
+  <div class="op-grid">
+    <div class="ob" id="b-send" onclick="run('send')"><div class="oi">📤</div><div class="on">Send Request</div><div class="oc">json.dumps()</div></div>
+    <div class="ob" id="b-resp" onclick="run('resp')"><div class="oi">📥</div><div class="on">Get Response</div><div class="oc">json.loads()</div></div>
+    <div class="ob" id="b-diff" onclick="run('diff')"><div class="oi">🔍</div><div class="on">Spot Differences</div><div class="oc">dict vs JSON</div></div>
+  </div>
+  <div class="sm" id="sm"></div>
+  <button class="rb" onclick="reset()">↺ Reset</button>
+</div>
+
+<script>
+const paymentRequest={txn_id:"TXN4821093",amount:500.00,vpa:"sambhav@upi",is_verified:true,remarks:null};
+const bankResponse={status:"SUCCESS",approved:true,bank_ref:"HDFC92837",error:null};
+
+function pyDict(obj){
+  const lines=Object.entries(obj).map(([k,v])=>{
+    let val;
+    if(v===null)val='None';
+    else if(v===true)val='True';
+    else if(v===false)val='False';
+    else if(typeof v==='string')val=`"${v}"`;
+    else val=v;
+    return `  "${k}": ${val}`;
+  });
+  return '{\n'+lines.join(',\n')+'\n}';
+}
+function jsonStr(obj){return JSON.stringify(obj,null,2);}
+
+function renderStatic(){
+  document.getElementById('code-out').innerHTML=
+    `<div class="cl lbl"># payment_request (Python dict)</div>`+
+    `<div class="cl">payment_request = ${esc(pyDict(paymentRequest))}</div>`;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function setActive(id){
+  ['b-send','b-resp','b-diff'].forEach(b=>document.getElementById(b).classList.remove('active'));
+  if(id)document.getElementById(id).classList.add('active');
+}
+function showMsg(t){const el=document.getElementById('sm');el.style.display='block';el.textContent='>>> '+t;}
+
+function run(key){
+  document.getElementById('diffbox').classList.remove('show');
+  const packet=document.getElementById('packet');
+  packet.classList.remove('show-down','show-up');
+
+  if(key==='send'){
+    setActive('b-send');
+    const json=jsonStr(paymentRequest);
+    document.getElementById('code-out').innerHTML=
+      `<div class="cl lbl"># Convert dict → JSON text</div>`+
+      `<div class="cl flash">request_json = json.dumps(payment_request)</div>`+
+      `<div class="cl cm"># → sent over the network as plain text:</div>`+
+      `<div class="cl flash">${esc(json)}</div>`;
+    document.getElementById('packet-lbl').textContent='REQUEST →';
+    document.getElementById('packet-body').textContent=json;
+    void packet.offsetWidth;
+    packet.classList.add('show-down');
+    showMsg('json.dumps(payment_request)  →  JSON text sent to the bank');
+  } else if(key==='resp'){
+    setActive('b-resp');
+    const json=jsonStr(bankResponse);
+    document.getElementById('code-out').innerHTML=
+      `<div class="cl lbl"># Bank replies with JSON text</div>`+
+      `<div class="cl cm">bank_response_json = '''${esc(json)}'''</div>`+
+      `<div class="cl flash">bank_response = json.loads(bank_response_json)</div>`+
+      `<div class="cl cm"># → back to a usable Python dict:</div>`+
+      `<div class="cl flash">${esc(pyDict(bankResponse))}</div>`;
+    document.getElementById('packet-lbl').textContent='← RESPONSE';
+    document.getElementById('packet-body').textContent=json;
+    void packet.offsetWidth;
+    packet.classList.add('show-up');
+    showMsg('json.loads(bank_response_json)  →  usable Python dict again');
+  } else if(key==='diff'){
+    setActive('b-diff');
+    document.getElementById('diffbox').classList.add('show');
+    document.getElementById('code-out').innerHTML=
+      `<div class="cl lbl"># Same data. Different rules.</div>`+
+      `<div class="cl cm">Python:  True, False, None, 'quotes'</div>`+
+      `<div class="cl cm">JSON:    true, false, null, "quotes"</div>`+
+      `<div class="cl cm"># JSON is stricter — and that's the point.</div>`+
+      `<div class="cl cm"># Strict rules mean ANY language can parse it.</div>`;
+    showMsg('JSON has no Python-specific types — that\\'s why every language can read it');
+  }
+}
+
+function reset(){
+  setActive(null);
+  renderStatic();
+  document.getElementById('diffbox').classList.remove('show');
+  document.getElementById('packet').classList.remove('show-down','show-up');
+  document.getElementById('sm').style.display='none';
+}
+
+renderStatic();
+</script>
+</body>
+</html>
