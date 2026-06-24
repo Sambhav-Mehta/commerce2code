@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Payoff — Commerce2Code · Series 02</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--or:#F97316;--tx:#0F172A;--mu:#64748B;--dm:#94A3B8;--bdr:#E2E8F0;--cod:#F1F5F9;--bbg:#FFF7ED;--dark:#0D1117;--ctx:#C9D1D9;--wh:#F8FAFC;
+  --gn:#22C55E;--gnbg:#DCFCE7;--bl:#3B82F6;--blbg:#EFF6FF;--pp:#5F259F;--ppbg:#F3EEFA;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',-apple-system,sans-serif;background:#0D1117;min-height:100vh;display:flex;flex-direction:column;}
+
+header{background:#161B22;border-bottom:1px solid #30363D;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;}
+.badge{background:var(--bbg);border:1.5px solid var(--or);border-radius:20px;padding:4px 12px;font-size:10px;color:var(--or);font-weight:700;letter-spacing:.05em;}
+.hd-t{font-size:14px;font-weight:700;color:white;}
+.hd-s{font-size:10px;color:var(--dm);}
+
+.split{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0;}
+@media(max-width:640px){.split{grid-template-columns:1fr;}}
+.code-p{background:#0D1117;padding:14px;overflow:auto;border-right:1px solid #30363D;}
+.ui-p{background:#FFF8F0;padding:14px;overflow-y:auto;}
+@media(max-width:640px){.code-p{border-right:none;border-bottom:1px solid #30363D;max-height:280px;}}
+.plbl{font-size:9px;color:var(--or);letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:10px;}
+
+.cl{font-family:'Roboto Mono',monospace;font-size:12px;color:var(--ctx);line-height:1.85;padding:1px 5px;border-radius:3px;white-space:pre-wrap;word-break:break-word;}
+@media(max-width:480px){.cl{font-size:10.5px;}}
+.cl.cm{color:#6E7681;}
+.cl.lbl{color:var(--or);font-weight:700;}
+@keyframes cFlash{0%{background:rgba(249,115,22,0);}40%{background:rgba(249,115,22,.3);color:#F97316;}100%{background:rgba(249,115,22,.12);color:#F97316;}}
+.cl.flash{animation:cFlash .8s ease forwards;}
+
+/* Menu */
+.card{background:white;border-radius:14px;border:1px solid var(--bdr);overflow:hidden;margin-bottom:12px;box-shadow:0 3px 12px rgba(0,0,0,.05);}
+.card-h{padding:11px 16px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;}
+.card-title{font-size:13px;font-weight:700;color:var(--tx);}
+.card-sub{font-size:10px;color:var(--mu);}
+.menu-item{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--bdr);}
+.menu-item:last-child{border-bottom:none;}
+.mi-name{font-size:13px;font-weight:600;color:var(--tx);}
+.mi-cat{font-size:9px;color:var(--mu);}
+.mi-price{font-size:13px;color:var(--mu);margin-right:10px;}
+.add-btn{background:var(--or);color:white;border:none;border-radius:7px;width:28px;height:28px;font-size:16px;font-weight:700;cursor:pointer;line-height:1;}
+.add-btn:active{transform:scale(.92);}
+
+/* Cart */
+.cart-list{padding:10px 16px;min-height:32px;}
+.cart-empty{font-size:12px;color:var(--dm);font-style:italic;}
+.cart-chip{display:inline-flex;align-items:center;gap:4px;background:var(--bbg);border:1px solid var(--or);border-radius:16px;padding:4px 10px;font-size:11px;color:var(--or);font-weight:600;margin:0 6px 6px 0;}
+@keyframes chipIn{0%{transform:scale(0);opacity:0;}70%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+.cart-chip.new{animation:chipIn .35s ease;}
+.cart-total{display:flex;justify-content:space-between;padding:10px 16px;border-top:1px solid var(--bdr);font-size:13px;font-weight:700;color:var(--tx);}
+
+/* Result cards */
+.result-card{background:white;border-radius:12px;border:1px solid var(--bdr);padding:12px 16px;margin-bottom:10px;display:none;}
+.result-card.show{display:block;}
+.result-card.tuple{background:var(--bbg);border-color:var(--or);}
+.result-card.set{background:var(--blbg);border-color:var(--bl);}
+.result-card.json{background:var(--ppbg);border-color:var(--pp);}
+.result-lbl{font-size:9px;font-weight:700;letter-spacing:.08em;margin-bottom:6px;}
+.result-body{font-family:'Roboto Mono',monospace;font-size:11.5px;white-space:pre-wrap;word-break:break-word;}
+.lock-pill{display:inline-flex;align-items:center;gap:5px;background:white;border:1px solid var(--or);border-radius:14px;padding:3px 10px;font-size:10px;color:var(--or);font-weight:700;margin-top:6px;}
+
+/* Ops */
+.ops{flex-shrink:0;background:#161B22;border-top:1px solid #30363D;padding:12px 14px;}
+.op-lbl{font-size:9px;color:var(--dm);font-weight:700;letter-spacing:.1em;margin-bottom:8px;}
+.op-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:7px;}
+@media(max-width:420px){.op-grid{grid-template-columns:repeat(2,1fr);}}
+.ob{background:#0D1117;border:1.5px solid #30363D;border-radius:9px;padding:8px 4px;cursor:pointer;text-align:center;transition:all .2s;-webkit-tap-highlight-color:transparent;}
+.ob:hover{border-color:var(--or);background:#1A1208;}
+.ob:active{transform:scale(.96);}
+.ob.active{border-color:var(--or);background:#1A1208;box-shadow:0 0 0 2px rgba(249,115,22,.2);}
+.oi{font-size:14px;margin-bottom:2px;}
+.on{font-size:9.5px;font-weight:700;color:white;}
+.oc{font-family:'Roboto Mono',monospace;font-size:7.5px;color:var(--dm);margin-top:1px;}
+.sm{background:#0D1117;border:1px solid #30363D;border-left:3px solid var(--or);border-radius:6px;padding:7px 11px;font-family:'Roboto Mono',monospace;font-size:10.5px;color:#A5D6FF;display:none;margin-bottom:7px;}
+.rb{width:100%;background:none;border:1.5px solid #30363D;border-radius:7px;padding:6px;font-size:11px;color:var(--dm);cursor:pointer;font-family:inherit;transition:all .2s;}
+.rb:hover{border-color:var(--mu);color:white;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Commerce2Code</div>
+  <div class="hd-t">The Payoff</div>
+  <div class="hd-s">Series 02 · Post 06</div>
+</header>
+
+<div class="split">
+  <div class="code-p">
+    <div class="plbl">Python — Everything, Together</div>
+    <div id="code-out"></div>
+  </div>
+  <div class="ui-p">
+    <div class="plbl" style="color:var(--or)">Swiggy — Final Order</div>
+
+    <div class="card">
+      <div class="card-h"><span class="card-title">🍽️ Sambhav's Kitchen</span><span class="card-sub">Menu</span></div>
+      <div id="menu-list"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span class="card-title">🛒 Your Cart</span><span class="card-sub" id="cart-count">0 items</span></div>
+      <div class="cart-list" id="cart-list"><span class="cart-empty">Tap + on a menu item to add it</span></div>
+      <div class="cart-total"><span>Total</span><span id="cart-total">₹0</span></div>
+    </div>
+
+    <div class="result-card tuple" id="tuple-card">
+      <div class="result-lbl" style="color:var(--or)">ORDER ID — TUPLE (LOCKED)</div>
+      <div class="result-body" id="tuple-body"></div>
+      <div class="lock-pill">🔒 Cannot be changed after this</div>
+    </div>
+
+    <div class="result-card set" id="set-card">
+      <div class="result-lbl" style="color:var(--bl)">UNIQUE CATEGORIES — SET</div>
+      <div class="result-body" id="set-body"></div>
+    </div>
+
+    <div class="result-card json" id="json-card">
+      <div class="result-lbl" style="color:var(--pp)">CHECKOUT PAYLOAD — JSON</div>
+      <div class="result-body" id="json-body"></div>
+    </div>
+  </div>
+</div>
+
+<div class="ops">
+  <div class="op-lbl">TRY EVERY CONCEPT FROM SERIES 02</div>
+  <div class="op-grid">
+    <div class="ob" id="b-first" onclick="run('first')"><div class="oi">🥇</div><div class="on">First Item</div><div class="oc">cart[0]</div></div>
+    <div class="ob" id="b-last" onclick="run('last')"><div class="oi">🔚</div><div class="on">Last Item</div><div class="oc">cart[-1]</div></div>
+    <div class="ob" id="b-recent" onclick="run('recent')"><div class="oi">📦</div><div class="on">Last 2 Added</div><div class="oc">cart[-2:]</div></div>
+    <div class="ob" id="b-cat" onclick="run('cat')"><div class="oi">🏷️</div><div class="on">Categories</div><div class="oc">set comp.</div></div>
+    <div class="ob" id="b-lock" onclick="run('lock')"><div class="oi">🔒</div><div class="on">Lock Order ID</div><div class="oc">tuple</div></div>
+    <div class="ob" id="b-checkout" onclick="run('checkout')"><div class="oi">📤</div><div class="on">Checkout</div><div class="oc">json.dumps()</div></div>
+  </div>
+  <div class="sm" id="sm"></div>
+  <button class="rb" onclick="reset()">↺ Reset cart</button>
+</div>
+
+<script>
+var menu=[
+  {name:"Biryani",price:249,cat:"Food"},
+  {name:"Lassi",price:79,cat:"Beverages"},
+  {name:"Gulab Jamun",price:99,cat:"Dessert"},
+  {name:"Butter Naan",price:49,cat:"Food"},
+  {name:"Paneer Tikka",price:219,cat:"Food"}
+];
+var menuByName={};
+menu.forEach(function(m){menuByName[m.name]=m;});
+
+var cartItems=[];
+var orderId=null;
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+function renderMenu(){
+  var html="";
+  menu.forEach(function(m){
+    html+='<div class="menu-item"><div><div class="mi-name">'+esc(m.name)+'</div><div class="mi-cat">'+esc(m.cat)+'</div></div>'+
+          '<div style="display:flex;align-items:center"><span class="mi-price">\u20B9'+m.price+'</span>'+
+          '<button class="add-btn" onclick="addItem(\''+esc(m.name)+'\')">+</button></div></div>';
+  });
+  document.getElementById('menu-list').innerHTML=html;
+}
+
+function renderCart(justAdded){
+  var listEl=document.getElementById('cart-list');
+  if(cartItems.length===0){
+    listEl.innerHTML='<span class="cart-empty">Tap + on a menu item to add it</span>';
+  } else {
+    listEl.innerHTML=cartItems.map(function(item,i){
+      var isNew=(justAdded!==undefined && i===cartItems.length-1);
+      return '<span class="cart-chip'+(isNew?' new':'')+'">'+esc(item)+'</span>';
+    }).join('');
+  }
+  var total=cartItems.reduce(function(sum,item){return sum+menuByName[item].price;},0);
+  document.getElementById('cart-count').textContent=cartItems.length+' item'+(cartItems.length===1?'':'s');
+  document.getElementById('cart-total').textContent='\u20B9'+total;
+  return total;
+}
+
+function pyListLiteral(arr){return '['+arr.map(function(x){return '"'+x+'"';}).join(', ')+']';}
+
+function renderStaticCode(){
+  var html='';
+  html+='<div class="cl lbl"># menu — a dict (price + category lookup)</div>';
+  html+='<div class="cl">menu = {"Biryani": 249, "Lassi": 79, ...}</div>';
+  html+='<div class="cl" style="margin-top:8px"></div>';
+  html+='<div class="cl lbl"># cart_items — a list, builds as you add</div>';
+  html+='<div class="cl" id="cart-code-line">cart_items = '+pyListLiteral(cartItems)+'</div>';
+  document.getElementById('code-out').innerHTML=html;
+}
+
+function addItem(name){
+  cartItems.push(name);
+  var total=renderCart(true);
+  renderStaticCode();
+  var line=document.getElementById('cart-code-line');
+  line.classList.add('flash');
+  showMsg('cart_items.append("'+name+'")  \u2192  cart now has '+cartItems.length+' item'+(cartItems.length===1?'':'s'));
+  ['tuple-card','set-card','json-card'].forEach(function(id){document.getElementById(id).classList.remove('show');});
+  setActive(null);
+}
+
+function setActive(id){
+  ['b-first','b-last','b-recent','b-cat','b-lock','b-checkout'].forEach(function(b){document.getElementById(b).classList.remove('active');});
+  if(id)document.getElementById(id).classList.add('active');
+}
+function showMsg(t){var el=document.getElementById('sm');el.style.display='block';el.textContent='>>> '+t;}
+function needsItems(){
+  if(cartItems.length===0){showMsg('Add at least one item to the cart first');return true;}
+  return false;
+}
+
+function run(key){
+  if(key!=='checkout' && key!=='lock'){ if(needsItems())return; }
+
+  if(key==='first'){
+    setActive('b-first');
+    if(needsItems())return;
+    renderStaticCode();
+    document.getElementById('code-out').innerHTML+=
+      '<div class="cl cm" style="margin-top:8px"></div>'+
+      '<div class="cl flash">cart_items[0]  # \u2192 "'+cartItems[0]+'"</div>';
+    showMsg('cart_items[0]  \u2192  "'+cartItems[0]+'"  (first item added)');
+  } else if(key==='last'){
+    setActive('b-last');
+    if(needsItems())return;
+    renderStaticCode();
+    document.getElementById('code-out').innerHTML+=
+      '<div class="cl cm" style="margin-top:8px"></div>'+
+      '<div class="cl flash">cart_items[-1]  # \u2192 "'+cartItems[cartItems.length-1]+'"</div>';
+    showMsg('cart_items[-1]  \u2192  "'+cartItems[cartItems.length-1]+'"  (most recent add)');
+  } else if(key==='recent'){
+    setActive('b-recent');
+    if(needsItems())return;
+    var recent=cartItems.slice(-2);
+    renderStaticCode();
+    document.getElementById('code-out').innerHTML+=
+      '<div class="cl cm" style="margin-top:8px"></div>'+
+      '<div class="cl flash">cart_items[-2:]  # \u2192 '+pyListLiteral(recent)+'</div>';
+    showMsg('cart_items[-2:]  \u2192  '+pyListLiteral(recent));
+  } else if(key==='cat'){
+    setActive('b-cat');
+    if(needsItems())return;
+    var cats=[];
+    cartItems.forEach(function(item){var c=menuByName[item].cat; if(cats.indexOf(c)===-1)cats.push(c);});
+    renderStaticCode();
+    document.getElementById('code-out').innerHTML+=
+      '<div class="cl cm" style="margin-top:8px"></div>'+
+      '<div class="cl lbl"># set comprehension — duplicates collapse automatically</div>'+
+      '<div class="cl flash">categories_in_cart = {item_category[i] for i in cart_items}</div>';
+    document.getElementById('set-card').classList.add('show');
+    document.getElementById('set-body').textContent='{'+cats.map(function(c){return '"'+c+'"';}).join(', ')+'}';
+    showMsg(cartItems.length+' items, only '+cats.length+' unique categor'+(cats.length===1?'y':'ies'));
+  } else if(key==='lock'){
+    setActive('b-lock');
+    if(needsItems())return;
+    if(!orderId){
+      orderId=['TXN'+Math.floor(10000+Math.random()*89999),"Sambhav's Kitchen"];
+    }
+    renderStaticCode();
+    document.getElementById('code-out').innerHTML+=
+      '<div class="cl cm" style="margin-top:8px"></div>'+
+      '<div class="cl flash">order_id = ("'+orderId[0]+'", "'+orderId[1]+'")</div>'+
+      '<div class="cl cm"># this tuple cannot change after checkout starts</div>';
+    document.getElementById('tuple-card').classList.add('show');
+    document.getElementById('tuple-body').textContent='("'+orderId[0]+'", "'+orderId[1]+'")';
+    showMsg('order_id locked: ("'+orderId[0]+'", "'+orderId[1]+'")');
+  } else if(key==='checkout'){
+    setActive('b-checkout');
+    if(needsItems())return;
+    if(!orderId){orderId=['TXN'+Math.floor(10000+Math.random()*89999),"Sambhav's Kitchen"];}
+    var total=cartItems.reduce(function(sum,item){return sum+menuByName[item].price;},0);
+    var cats=[];
+    cartItems.forEach(function(item){var c=menuByName[item].cat; if(cats.indexOf(c)===-1)cats.push(c);});
+    var order={order_id:orderId[0],restaurant:orderId[1],items:cartItems,total:total,categories:cats};
+    var orderJson=JSON.stringify(order,null,2);
+    renderStaticCode();
+    document.getElementById('code-out').innerHTML+=
+      '<div class="cl cm" style="margin-top:8px"></div>'+
+      '<div class="cl lbl"># everything above, collapsed into one JSON packet</div>'+
+      '<div class="cl flash">order_json = json.dumps(order, indent=2)</div>';
+    document.getElementById('tuple-card').classList.add('show');
+    document.getElementById('tuple-body').textContent='("'+orderId[0]+'", "'+orderId[1]+'")';
+    document.getElementById('set-card').classList.add('show');
+    document.getElementById('set-body').textContent='{'+cats.map(function(c){return '"'+c+'"';}).join(', ')+'}';
+    document.getElementById('json-card').classList.add('show');
+    document.getElementById('json-body').textContent=orderJson;
+    showMsg('Checkout complete \u2014 sent to the kitchen as JSON');
+  }
+}
+
+function reset(){
+  cartItems=[];
+  orderId=null;
+  renderCart();
+  renderStaticCode();
+  setActive(null);
+  ['tuple-card','set-card','json-card'].forEach(function(id){document.getElementById(id).classList.remove('show');});
+  document.getElementById('sm').style.display='none';
+}
+
+renderMenu();
+renderCart();
+renderStaticCode();
+</script>
+</body>
+</html>
